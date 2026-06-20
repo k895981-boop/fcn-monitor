@@ -69,13 +69,17 @@ def get_prices():
             to_ki = (price / u["ki"] - 1) * 100
             to_strike = (price / u["strike"] - 1) * 100
 
-            # 狀態判斷
-            if price >= u["ko"]:
+            # 狀態判斷（KO 觀察期 2026/07/06 起才生效）
+            first_ko_date = date(2026, 7, 6)
+            ko_observation_active = date.today() >= first_ko_date
+            if ko_observation_active and price >= u["ko"]:
                 status = "KO_TRIGGERED"
             elif price <= u["ki"]:
                 status = "KI_TRIGGERED"
             elif price <= u["strike"]:
                 status = "BELOW_STRIKE"
+            elif not ko_observation_active and price >= u["ko"]:
+                status = "ABOVE_KO_NOT_YET"
             else:
                 status = "SAFE"
 
@@ -169,6 +173,7 @@ HTML_TEMPLATE = """
   .card.status-KO_TRIGGERED { border-color: #10b981; box-shadow: 0 0 20px rgba(16,185,129,0.15); }
   .card.status-KI_TRIGGERED { border-color: #ef4444; box-shadow: 0 0 20px rgba(239,68,68,0.2); }
   .card.status-BELOW_STRIKE { border-color: #f59e0b; box-shadow: 0 0 20px rgba(245,158,11,0.1); }
+  .card.status-ABOVE_KO_NOT_YET { border-color: #3b82f6; box-shadow: 0 0 20px rgba(59,130,246,0.1); }
   .card.worst-of { border-top: 3px solid #f59e0b; }
 
   .card-header { padding: 16px 20px 12px; background: #141820; display: flex; justify-content: space-between; align-items: flex-start; }
@@ -179,6 +184,7 @@ HTML_TEMPLATE = """
   .badge-KO_TRIGGERED { background: #064e3b; color: #10b981; }
   .badge-KI_TRIGGERED { background: #450a0a; color: #ef4444; }
   .badge-BELOW_STRIKE { background: #451a03; color: #f59e0b; }
+  .badge-ABOVE_KO_NOT_YET { background: #1e3a5f; color: #60a5fa; }
   .badge-WORST { background: #422006; color: #fb923c; margin-top: 4px; display: block; text-align: center; }
 
   .price-section { padding: 16px 20px; }
@@ -289,7 +295,7 @@ HTML_TEMPLATE = """
 const underlyings = {{ fcn.underlyings | tojson }};
 
 function statusText(s) {
-  return { SAFE: '正常', KO_TRIGGERED: '已觸 KO', KI_TRIGGERED: '已觸 KI', BELOW_STRIKE: '低於執行價' }[s] || s;
+  return { SAFE: '正常', KO_TRIGGERED: '已觸 KO', KI_TRIGGERED: '已觸 KI', BELOW_STRIKE: '低於執行價', ABOVE_KO_NOT_YET: '超過KO價（未到比價日）' }[s] || s;
 }
 function badgeClass(s) {
   return 'badge-' + s;
@@ -414,6 +420,7 @@ async function refresh() {
     const items = data.underlyings.filter(u => !u.error);
     const hasKI = items.some(u => u.status === 'KI_TRIGGERED');
     const allKO = items.every(u => u.status === 'KO_TRIGGERED');
+    const aboveKONotYet = items.some(u => u.status === 'ABOVE_KO_NOT_YET');
     const belowStrike = items.some(u => u.status === 'BELOW_STRIKE');
 
     document.getElementById('alert-ko').style.display = allKO ? 'block' : 'none';
@@ -427,6 +434,9 @@ async function refresh() {
     } else if (allKO) {
       statusEl.innerHTML = '<span style="color:#10b981">✅ 所有標的 ≥ KO</span>';
       subEl.textContent = '可能觸發提前贖回';
+    } else if (aboveKONotYet) {
+      statusEl.innerHTML = '<span style="color:#60a5fa">📅 超過KO但未到比價日</span>';
+      subEl.textContent = '保證配息期中，7/6 起才開始比價';
     } else if (belowStrike) {
       statusEl.innerHTML = '<span style="color:#f59e0b">⚠ 部分低於執行價</span>';
       subEl.textContent = '需持續關注';
