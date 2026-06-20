@@ -7,9 +7,11 @@ app = Flask(__name__)
 # FCN 商品參數
 FCN = {
     "name": "BBVA 4個月期 USD 自動提前贖回 FCN",
-    "code": "2026SN3011",
+    "code": "穿著皮衣的黃大哥",
     "start_date": "2026/05/29",
     "maturity_date": "2026/09/29",
+    "first_ko_date": "2026/07/06",
+    "last_ko_date": "2026/09/07",
     "coupon_annual": 27.74,
     "guaranteed_months": 1,
     "currency": "USD",
@@ -104,15 +106,22 @@ def get_prices():
             if worst is None or pct < worst["price_pct_of_initial"]:
                 worst = item
 
-    # 計算剩餘天數
+    # 計算剩餘天數與 KO 觀察狀態
     maturity = date(2026, 9, 29)
-    days_left = (maturity - date.today()).days
+    first_ko = date(2026, 7, 6)
+    last_ko = date(2026, 9, 7)
+    today = date.today()
+    days_left = (maturity - today).days
+    ko_active = first_ko <= today <= last_ko
+    days_to_first_ko = max(0, (first_ko - today).days)
 
     return jsonify({
         "underlyings": result,
         "worst_of": worst["ticker"] if worst else None,
         "worst_pct": worst["price_pct_of_initial"] if worst else None,
         "days_left": days_left,
+        "ko_active": ko_active,
+        "days_to_first_ko": days_to_first_ko,
         "updated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
     })
 
@@ -134,6 +143,19 @@ HTML_TEMPLATE = """
   .header-meta { display: flex; gap: 24px; margin-top: 8px; flex-wrap: wrap; }
   .meta-item { font-size: 0.82rem; color: #64748b; }
   .meta-item span { color: #94a3b8; font-weight: 600; }
+  .ko-period-bar { padding: 10px 24px; background: #0f1117; border-bottom: 1px solid #1e2535; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .ko-period-badge { padding: 4px 12px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; }
+  .ko-period-active { background: #064e3b; color: #10b981; border: 1px solid #10b981; }
+  .ko-period-waiting { background: #1e293b; color: #64748b; border: 1px solid #374151; }
+  .ko-period-text { font-size: 0.8rem; color: #64748b; }
+  .ko-period-text strong { color: #94a3b8; }
+  .dist-pills { display: flex; gap: 8px; padding: 0 20px 14px; }
+  .dist-pill { flex: 1; border-radius: 8px; padding: 8px 10px; text-align: center; }
+  .dist-pill .dp-label { font-size: 0.68rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
+  .dist-pill .dp-value { font-size: 1.2rem; font-weight: 800; margin-top: 2px; }
+  .dp-ko { background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.2); }
+  .dp-strike { background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); }
+  .dp-ki { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.15); }
 
   .summary-bar { display: flex; gap: 16px; padding: 16px 24px; background: #141820; border-bottom: 1px solid #1e2535; flex-wrap: wrap; }
   .summary-card { flex: 1; min-width: 160px; background: #1a1f35; border-radius: 8px; padding: 12px 16px; border: 1px solid #2d3748; }
@@ -217,6 +239,16 @@ HTML_TEMPLATE = """
     <div class="meta-item">KO 觀察 <span>每日（Memory型）</span></div>
     <div class="meta-item">幣別 <span>{{ fcn.currency }}</span></div>
   </div>
+</div>
+
+<div class="ko-period-bar">
+  <span class="ko-period-badge" id="ko-badge">載入中…</span>
+  <span class="ko-period-text">
+    首個比價日 <strong>{{ fcn.first_ko_date }}</strong>
+    最後比價日 <strong>{{ fcn.last_ko_date }}</strong>
+    保證配息期（前1個月不比價）
+  </span>
+  <span class="ko-period-text" id="ko-period-sub"></span>
 </div>
 
 <div class="summary-bar">
@@ -317,6 +349,21 @@ function buildCard(u, data, isWorst) {
       </div>
     </div>
 
+    <div class="dist-pills">
+      <div class="dist-pill dp-ko">
+        <div class="dp-label">距 KO</div>
+        <div class="dp-value" style="color:${data.to_ko_pct >= 0 ? '#10b981' : '#ef4444'}">${data.to_ko_pct > 0 ? '+' : ''}${data.to_ko_pct.toFixed(1)}%</div>
+      </div>
+      <div class="dist-pill dp-strike">
+        <div class="dp-label">距 Strike</div>
+        <div class="dp-value" style="color:${data.to_strike_pct >= 0 ? '#f59e0b' : '#ef4444'}">${data.to_strike_pct > 0 ? '+' : ''}${data.to_strike_pct.toFixed(1)}%</div>
+      </div>
+      <div class="dist-pill dp-ki">
+        <div class="dp-label">距 KI</div>
+        <div class="dp-value" style="color:${data.to_ki_pct > 20 ? '#64748b' : data.to_ki_pct > 0 ? '#f59e0b' : '#ef4444'}">+${data.to_ki_pct.toFixed(1)}%</div>
+      </div>
+    </div>
+
     <div class="levels">
       <div class="level-row">
         <div class="level-label" style="color:#10b981">▲ KO 價</div>
@@ -349,6 +396,19 @@ async function refresh() {
     document.getElementById('worst-pct').textContent = data.worst_pct ? `期初價的 ${data.worst_pct.toFixed(2)}%` : '';
     document.getElementById('days-left').textContent = data.days_left;
     document.getElementById('update-time').textContent = data.updated_at;
+
+    // KO 觀察期狀態
+    const badge = document.getElementById('ko-badge');
+    const sub = document.getElementById('ko-period-sub');
+    if (data.ko_active) {
+      badge.textContent = '✅ KO 觀察中';
+      badge.className = 'ko-period-badge ko-period-active';
+      sub.textContent = '每個交易日收盤後比對，所有標的 ≥ 期初價即提前贖回';
+    } else {
+      badge.textContent = `⏳ 保證配息期（還有 ${data.days_to_first_ko} 天開始比價）`;
+      badge.className = 'ko-period-badge ko-period-waiting';
+      sub.textContent = '首個比價日前不會觸發提前贖回';
+    }
 
     // 整體狀態
     const items = data.underlyings.filter(u => !u.error);
