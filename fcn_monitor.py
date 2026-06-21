@@ -7,7 +7,7 @@ app = Flask(__name__)
 # FCN 商品參數
 FCN = {
     "name": "BBVA 4個月期 USD 自動提前贖回 FCN",
-    "code": "穿著皮衣的黃大哥",
+    "code": "很節省的黃大哥",
     "start_date": "2026/05/29",
     "maturity_date": "2026/09/29",
     "first_ko_date": "2026/07/06",
@@ -241,7 +241,7 @@ HTML_TEMPLATE = """
     <div class="meta-item">定價日 <span>{{ fcn.start_date }}</span></div>
     <div class="meta-item">到期日 <span>{{ fcn.maturity_date }}</span></div>
     <div class="meta-item">年化票息 <span>{{ "%.2f"|format(fcn.coupon_annual) }}%</span></div>
-    <div class="meta-item">月息 <span>約 14.3萬台幣</span><span style="color:#4b5563;font-size:0.72rem;margin-left:4px;">（20萬USD × 27.74%÷12 × 匯率31）</span></div>
+    <div class="meta-item">月息 <span>約 2.31%・14.3萬台幣</span><span style="color:#4b5563;font-size:0.72rem;margin-left:4px;">（20萬USD × 27.74%÷12 × 匯率31）</span></div>
     <div class="meta-item">KO 觀察 <span>每日（Memory型）</span></div>
     <div class="meta-item">幣別 <span>{{ fcn.currency }}</span></div>
   </div>
