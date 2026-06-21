@@ -287,18 +287,18 @@ HTML_TEMPLATE = """
 <div class="cards" id="cards-container" style="display:none;"></div>
 
 <div class="footer">
-  <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:16px;">
-    <div style="background:#064e3b;border:1px solid #10b981;border-radius:10px;padding:12px 20px;max-width:280px;text-align:left;">
-      <div style="color:#10b981;font-size:0.85rem;font-weight:800;margin-bottom:4px;">✅ KO（自動提前贖回）</div>
-      <div style="color:#a7f3d0;font-size:0.78rem;line-height:1.5;"><strong>三檔標的同一天全部 ≥ 期初價</strong>，產品提前結束，拿回本金＋已累積票息，是最好的結果。只要有一檔未達標，當天就不觸發。</div>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:16px;">
+    <div style="background:#0f1117;border:0.5px solid #374151;border-top:3px solid #10b981;border-radius:10px;padding:10px 8px;">
+      <div style="color:#10b981;font-size:0.78rem;font-weight:700;margin-bottom:6px;">KO 自動提前贖回</div>
+      <div style="color:#9ca3af;font-size:0.72rem;line-height:1.6;">三檔標的同一天全部 ≥ 期初價，產品提前結束，拿回本金＋已累積票息，是最好的結果。只要有一檔未達標，當天就不觸發。</div>
     </div>
-    <div style="background:#451a03;border:1px solid #f59e0b;border-radius:10px;padding:12px 20px;max-width:280px;text-align:left;">
-      <div style="color:#f59e0b;font-size:0.85rem;font-weight:800;margin-bottom:4px;">⚠ Strike（執行價）</div>
-      <div style="color:#fde68a;font-size:0.78rem;line-height:1.5;">到期時若最弱標的低於此價，將以此價格<strong>買進那檔股票</strong>，而非返還現金本金。</div>
+    <div style="background:#0f1117;border:0.5px solid #374151;border-top:3px solid #f59e0b;border-radius:10px;padding:10px 8px;">
+      <div style="color:#f59e0b;font-size:0.78rem;font-weight:700;margin-bottom:6px;">Strike 執行價</div>
+      <div style="color:#9ca3af;font-size:0.72rem;line-height:1.6;">到期時若最弱標的低於此價，將以此價格買進那檔股票，而非返還現金本金。</div>
     </div>
-    <div style="background:#450a0a;border:1px solid #ef4444;border-radius:10px;padding:12px 20px;max-width:280px;text-align:left;">
-      <div style="color:#ef4444;font-size:0.85rem;font-weight:800;margin-bottom:4px;">🚨 KI（觸及 / 保護失效線）</div>
-      <div style="color:#fca5a5;font-size:0.78rem;line-height:1.5;">任一標的<strong>曾跌破此價</strong>，本金保護立即失效。到期時將以執行價（Strike）<strong>買進最弱標的的股票</strong>。</div>
+    <div style="background:#0f1117;border:0.5px solid #374151;border-top:3px solid #ef4444;border-radius:10px;padding:10px 8px;">
+      <div style="color:#ef4444;font-size:0.78rem;font-weight:700;margin-bottom:6px;">KI 保護失效線</div>
+      <div style="color:#9ca3af;font-size:0.72rem;line-height:1.6;">任一標的曾跌破此價，本金保護立即失效。到期時將以執行價（Strike）買進最弱標的的股票。</div>
     </div>
   </div>
   <div style="color:#374151;font-size:0.72rem;">資料來源：Yahoo Finance（15分鐘延遲）｜僅供參考，不構成投資建議</div>
