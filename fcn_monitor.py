@@ -290,7 +290,7 @@ HTML_TEMPLATE = """
   <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:16px;">
     <div style="background:#0f1117;border:0.5px solid #374151;border-top:3px solid #10b981;border-radius:10px;padding:10px 8px;">
       <div style="color:#10b981;font-size:0.78rem;font-weight:700;margin-bottom:6px;">KO 自動提前贖回</div>
-      <div style="color:#9ca3af;font-size:0.72rem;line-height:1.6;">三檔標的同一天全部 ≥ 期初價，產品提前結束，拿回本金＋已累積票息，是最好的結果。只要有一檔未達標，當天就不觸發。</div>
+      <div style="color:#9ca3af;font-size:0.72rem;line-height:1.6;">三檔標的同一天全部 ≥ 期初價，產品提前結束，拿回本金＋已累積票息。只要有一檔未達標，當天就不觸發。</div>
     </div>
     <div style="background:#0f1117;border:0.5px solid #374151;border-top:3px solid #f59e0b;border-radius:10px;padding:10px 8px;">
       <div style="color:#f59e0b;font-size:0.78rem;font-weight:700;margin-bottom:6px;">Strike 執行價</div>
