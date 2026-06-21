@@ -241,7 +241,7 @@ HTML_TEMPLATE = """
     <div class="meta-item">定價日 <span>{{ fcn.start_date }}</span></div>
     <div class="meta-item">到期日 <span>{{ fcn.maturity_date }}</span></div>
     <div class="meta-item">年化票息 <span>{{ "%.2f"|format(fcn.coupon_annual) }}%</span></div>
-    <div class="meta-item">月息 <span>{{ "%.2f"|format(monthly_coupon) }}%</span></div>
+    <div class="meta-item">月息 <span>約 14.3萬台幣</span><span style="color:#4b5563;font-size:0.72rem;margin-left:4px;">（20萬USD × 27.74%÷12 × 匯率31）</span></div>
     <div class="meta-item">KO 觀察 <span>每日（Memory型）</span></div>
     <div class="meta-item">幣別 <span>{{ fcn.currency }}</span></div>
   </div>
@@ -287,8 +287,21 @@ HTML_TEMPLATE = """
 <div class="cards" id="cards-container" style="display:none;"></div>
 
 <div class="footer">
-  資料來源：Yahoo Finance（15分鐘延遲）｜僅供參考，不構成投資建議<br>
-  KO Strike = 100% 期初價｜Strike = 70% 期初價｜KI = 60% 期初價
+  <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:16px;">
+    <div style="background:#064e3b;border:1px solid #10b981;border-radius:10px;padding:12px 20px;max-width:280px;text-align:left;">
+      <div style="color:#10b981;font-size:0.85rem;font-weight:800;margin-bottom:4px;">✅ KO（自動提前贖回）</div>
+      <div style="color:#a7f3d0;font-size:0.78rem;line-height:1.5;">股價漲回買入時的價格，產品提前結束，<strong>拿回本金＋已累積票息</strong>，是最好的結果。</div>
+    </div>
+    <div style="background:#451a03;border:1px solid #f59e0b;border-radius:10px;padding:12px 20px;max-width:280px;text-align:left;">
+      <div style="color:#f59e0b;font-size:0.85rem;font-weight:800;margin-bottom:4px;">⚠ Strike（執行價 / 到期保護線）</div>
+      <div style="color:#fde68a;font-size:0.78rem;line-height:1.5;">到期時若最弱標的<strong>低於此價</strong>，本金將依股價跌幅比例損失，而非全額返還。</div>
+    </div>
+    <div style="background:#450a0a;border:1px solid #ef4444;border-radius:10px;padding:12px 20px;max-width:280px;text-align:left;">
+      <div style="color:#ef4444;font-size:0.85rem;font-weight:800;margin-bottom:4px;">🚨 KI（觸及 / 保護失效線）</div>
+      <div style="color:#fca5a5;font-size:0.78rem;line-height:1.5;">任一標的<strong>曾跌破此價</strong>，本金保護立即失效。到期若未漲回 Strike 以上，將有本金損失。</div>
+    </div>
+  </div>
+  <div style="color:#374151;font-size:0.72rem;">資料來源：Yahoo Finance（15分鐘延遲）｜僅供參考，不構成投資建議</div>
 </div>
 
 <script>
@@ -372,17 +385,17 @@ function buildCard(u, data, isWorst) {
 
     <div class="levels">
       <div class="level-row">
-        <div class="level-label" style="color:#10b981">▲ KO 價</div>
+        <div class="level-label" style="color:#10b981">▲ KO 價 <span style="color:#374151;font-size:0.65rem">100%</span></div>
         <div class="level-value">$${u.ko.toFixed(2)}</div>
         <div class="level-dist" style="color:${distKOColor}">${data.to_ko_pct > 0 ? '+' : ''}${data.to_ko_pct.toFixed(1)}%</div>
       </div>
       <div class="level-row">
-        <div class="level-label" style="color:#f59e0b">― Strike</div>
+        <div class="level-label" style="color:#f59e0b">― Strike <span style="color:#374151;font-size:0.65rem">70%</span></div>
         <div class="level-value">$${u.strike.toFixed(2)}</div>
         <div class="level-dist" style="color:${distStrikeColor}">${data.to_strike_pct > 0 ? '+' : ''}${data.to_strike_pct.toFixed(1)}%</div>
       </div>
       <div class="level-row">
-        <div class="level-label" style="color:#ef4444">▼ KI 價</div>
+        <div class="level-label" style="color:#ef4444">▼ KI 價 <span style="color:#374151;font-size:0.65rem">60%</span></div>
         <div class="level-value">$${u.ki.toFixed(2)}</div>
         <div class="level-dist" style="color:${distKIColor}">+${data.to_ki_pct.toFixed(1)}%</div>
       </div>
