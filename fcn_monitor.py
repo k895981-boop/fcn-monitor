@@ -293,12 +293,12 @@ HTML_TEMPLATE = """
       <div style="color:#a7f3d0;font-size:0.78rem;line-height:1.5;"><strong>三檔標的同一天全部 ≥ 期初價</strong>，產品提前結束，拿回本金＋已累積票息，是最好的結果。只要有一檔未達標，當天就不觸發。</div>
     </div>
     <div style="background:#451a03;border:1px solid #f59e0b;border-radius:10px;padding:12px 20px;max-width:280px;text-align:left;">
-      <div style="color:#f59e0b;font-size:0.85rem;font-weight:800;margin-bottom:4px;">⚠ Strike（執行價 / 到期保護線）</div>
-      <div style="color:#fde68a;font-size:0.78rem;line-height:1.5;">到期時若最弱標的<strong>低於此價</strong>，本金將依股價跌幅比例損失，而非全額返還。</div>
+      <div style="color:#f59e0b;font-size:0.85rem;font-weight:800;margin-bottom:4px;">⚠ Strike（執行價）</div>
+      <div style="color:#fde68a;font-size:0.78rem;line-height:1.5;">到期時若最弱標的低於此價，將以此價格<strong>強制買進那檔股票</strong>，而非返還現金本金。</div>
     </div>
     <div style="background:#450a0a;border:1px solid #ef4444;border-radius:10px;padding:12px 20px;max-width:280px;text-align:left;">
       <div style="color:#ef4444;font-size:0.85rem;font-weight:800;margin-bottom:4px;">🚨 KI（觸及 / 保護失效線）</div>
-      <div style="color:#fca5a5;font-size:0.78rem;line-height:1.5;">任一標的<strong>曾跌破此價</strong>，本金保護立即失效。到期若未漲回 Strike 以上，將有本金損失。</div>
+      <div style="color:#fca5a5;font-size:0.78rem;line-height:1.5;">任一標的<strong>曾跌破此價</strong>，本金保護立即失效。到期時將以執行價（Strike）<strong>強制買進最弱標的的股票</strong>。</div>
     </div>
   </div>
   <div style="color:#374151;font-size:0.72rem;">資料來源：Yahoo Finance（15分鐘延遲）｜僅供參考，不構成投資建議</div>
