@@ -280,7 +280,7 @@ HTML_TEMPLATE = """
   </div>
 </div>
 
-<div id="alert-ko" class="alert-banner alert-ko">✅ 所有標的均已超過 KO 價位，可能觸發提前贖回！請確認觀察日條件。</div>
+<div id="alert-ko" class="alert-banner alert-ko">✅ 三檔標的今日全部 ≥ 期初價！符合提前贖回條件，請確認當日收盤價是否維持。</div>
 <div id="alert-ki" class="alert-banner alert-ki">⚠️ 警告：有標的已跌破 KI（觸及）價位，本金保護已失效！</div>
 
 <div id="loading"><span class="spinner"></span>正在抓取即時報價…</div>
@@ -290,7 +290,7 @@ HTML_TEMPLATE = """
   <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:16px;">
     <div style="background:#064e3b;border:1px solid #10b981;border-radius:10px;padding:12px 20px;max-width:280px;text-align:left;">
       <div style="color:#10b981;font-size:0.85rem;font-weight:800;margin-bottom:4px;">✅ KO（自動提前贖回）</div>
-      <div style="color:#a7f3d0;font-size:0.78rem;line-height:1.5;">股價漲回買入時的價格，產品提前結束，<strong>拿回本金＋已累積票息</strong>，是最好的結果。</div>
+      <div style="color:#a7f3d0;font-size:0.78rem;line-height:1.5;"><strong>三檔標的同一天全部 ≥ 期初價</strong>，產品提前結束，拿回本金＋已累積票息，是最好的結果。只要有一檔未達標，當天就不觸發。</div>
     </div>
     <div style="background:#451a03;border:1px solid #f59e0b;border-radius:10px;padding:12px 20px;max-width:280px;text-align:left;">
       <div style="color:#f59e0b;font-size:0.85rem;font-weight:800;margin-bottom:4px;">⚠ Strike（執行價 / 到期保護線）</div>
@@ -445,8 +445,8 @@ async function refresh() {
       statusEl.innerHTML = '<span style="color:#ef4444">⚠ KI 已觸及</span>';
       subEl.textContent = '本金保護失效';
     } else if (allKO) {
-      statusEl.innerHTML = '<span style="color:#10b981">✅ 所有標的 ≥ KO</span>';
-      subEl.textContent = '可能觸發提前贖回';
+      statusEl.innerHTML = '<span style="color:#10b981">✅ 三檔全部 ≥ KO</span>';
+      subEl.textContent = '符合提前贖回條件（需三檔同時達標）';
     } else if (aboveKONotYet) {
       statusEl.innerHTML = '<span style="color:#60a5fa">📅 超過KO但未到比價日</span>';
       subEl.textContent = '保證配息期中，7/6 起才開始比價';
