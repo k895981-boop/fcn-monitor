@@ -46,10 +46,17 @@ FCN = {
 # 計算每月票息（年化 27.74%，4個月期）
 MONTHLY_COUPON = FCN["coupon_annual"] / 12 / 100
 
+# 黃先生專屬版本
+FCN_CONAN = {**FCN, "code": "柯南"}
+
 
 @app.route("/")
 def index():
     return render_template_string(HTML_TEMPLATE, fcn=FCN, monthly_coupon=MONTHLY_COUPON * 100)
+
+@app.route("/conan")
+def index_conan():
+    return render_template_string(HTML_TEMPLATE, fcn=FCN_CONAN, monthly_coupon=MONTHLY_COUPON * 100)
 
 
 @app.route("/api/prices")
