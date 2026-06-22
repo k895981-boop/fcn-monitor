@@ -229,8 +229,8 @@ HTML_TEMPLATE = """
   .cs-row-current .cs-amount { color: #b45309; font-size: 0.92rem; font-weight: 700; }
   .cs-row-current .cs-amount-twd { color: #d97706; font-size: 0.85rem; font-weight: 700; }
   .cs-row-past td { color: #cbd5e1; }
-  .cs-amount { color: #475569; }
-  .cs-amount-twd { color: #64748b; font-size: 0.78rem; }
+  .cs-amount { color: #1e293b; font-weight: 600; font-size: 0.9rem; }
+  .cs-amount-twd { color: #475569; font-size: 0.82rem; }
   .cs-total td { border-top: 1px solid #e2e8f0; color: #0f172a; font-weight: 700; padding-top: 8px; }
   .cs-total .cs-amount { color: #b45309; font-size: 0.92rem; }
   .cs-total .cs-amount-twd { color: #d97706; }
