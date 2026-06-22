@@ -36,17 +36,6 @@ FCN = {
 
 FCN_CONAN = {**FCN, "code": "2026SN3011"}
 
-FCN_YQ = {
-    **FCN_SN3565,
-    "name": "Goldman Sachs 6個月期 USD 自動提前贖回 FCN・10萬 USD",
-    "code": "玉祺的客戶",
-    "coupon_note": "約 1.97%・6.1萬台幣（10萬USD × 23.61%÷12 × 匯率31）",
-    "coupon_per_period_usd": 1968,
-    "coupon_per_period_twd": "6.1萬",
-    "total_coupon_usd": 11808,
-    "total_coupon_twd": "約36.6萬",
-}
-
 FCN_SN3565 = {
     "name": "Goldman Sachs 6個月期 USD 自動提前贖回 FCN・5萬 USD",
     "code": "2026SN3565",
@@ -75,6 +64,17 @@ FCN_SN3565 = {
         {"ticker": "MU",   "name": "美光科技 (MU)",  "initial": 1020.76,  "strike": 612.456,  "ko": 1020.76,  "ki": 510.38},
         {"ticker": "NVDA", "name": "輝達 (NVDA)",    "initial": 207.41,   "strike": 124.446,  "ko": 207.41,   "ki": 103.705},
     ],
+}
+
+FCN_YQ = {
+    **FCN_SN3565,
+    "name": "Goldman Sachs 6個月期 USD 自動提前贖回 FCN・10萬 USD",
+    "code": "玉祺的客戶",
+    "coupon_note": "約 1.97%・6.1萬台幣（10萬USD × 23.61%÷12 × 匯率31）",
+    "coupon_per_period_usd": 1968,
+    "coupon_per_period_twd": "6.1萬",
+    "total_coupon_usd": 11808,
+    "total_coupon_twd": "約36.6萬",
 }
 
 MONTHLY_COUPON = FCN["coupon_annual"] / 12 / 100
