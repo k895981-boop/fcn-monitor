@@ -4,7 +4,8 @@ from datetime import datetime, date
 
 app = Flask(__name__)
 
-# FCN 商品參數
+# ── FCN 商品定義 ──────────────────────────────────────────
+
 FCN = {
     "name": "BBVA 4個月期 USD 自動提前贖回 FCN・20萬 USD",
     "code": "很節省的黃大哥",
@@ -15,54 +16,71 @@ FCN = {
     "coupon_annual": 27.74,
     "guaranteed_months": 1,
     "currency": "USD",
+    "coupon_note": "約 2.31%・14.3萬台幣（20萬USD × 27.74%÷12 × 匯率31）",
+    "coupon_per_period_usd": 4623,
+    "coupon_per_period_twd": "14.3萬",
+    "total_coupon_usd": 18493,
+    "total_coupon_twd": "約57.3萬",
+    "periods": [
+        {"t": 1, "start": "2026/6/5",  "end": "2026/7/6",  "pay": "2026/7/8",  "start_iso": "2026-06-05", "end_iso": "2026-07-06"},
+        {"t": 2, "start": "2026/7/7",  "end": "2026/8/5",  "pay": "2026/8/7",  "start_iso": "2026-07-07", "end_iso": "2026-08-05"},
+        {"t": 3, "start": "2026/8/6",  "end": "2026/9/8",  "pay": "2026/9/10", "start_iso": "2026-08-06", "end_iso": "2026-09-08"},
+        {"t": 4, "start": "2026/9/9",  "end": "2026/10/5", "pay": "2026/10/7", "start_iso": "2026-09-09", "end_iso": "2026-10-05"},
+    ],
     "underlyings": [
-        {
-            "ticker": "AMD",
-            "name": "超微半導體 (AMD)",
-            "initial": 516.10,
-            "strike": 361.27,    # 70%
-            "ko": 516.10,        # 100%
-            "ki": 309.66,        # 60%
-        },
-        {
-            "ticker": "ARM",
-            "name": "安謀控股 (ARM)",
-            "initial": 353.29,
-            "strike": 247.303,
-            "ko": 353.29,
-            "ki": 211.974,
-        },
-        {
-            "ticker": "TSLA",
-            "name": "特斯拉 (TSLA)",
-            "initial": 435.79,
-            "strike": 305.053,
-            "ko": 435.79,
-            "ki": 261.474,
-        },
+        {"ticker": "AMD",  "name": "超微半導體 (AMD)",  "initial": 516.10,  "strike": 361.27,  "ko": 516.10,  "ki": 309.66},
+        {"ticker": "ARM",  "name": "安謀控股 (ARM)",   "initial": 353.29,  "strike": 247.303, "ko": 353.29,  "ki": 211.974},
+        {"ticker": "TSLA", "name": "特斯拉 (TSLA)",    "initial": 435.79,  "strike": 305.053, "ko": 435.79,  "ki": 261.474},
     ],
 }
 
-# 計算每月票息（年化 27.74%，4個月期）
-MONTHLY_COUPON = FCN["coupon_annual"] / 12 / 100
-
-# 黃先生專屬版本
 FCN_CONAN = {**FCN, "code": "2026SN3011"}
 
+FCN_SN3565 = {
+    "name": "Goldman Sachs 6個月期 USD 自動提前贖回 FCN・5萬 USD",
+    "code": "2026SN3565",
+    "start_date": "2026/06/16",
+    "maturity_date": "2026/12/28",
+    "first_ko_date": "2026/07/23",
+    "last_ko_date": "2026/12/23",
+    "coupon_annual": 23.61,
+    "guaranteed_months": 1,
+    "currency": "USD",
+    "coupon_note": "約 1.97%・3.0萬台幣（5萬USD × 23.61%÷12 × 匯率31）",
+    "coupon_per_period_usd": 984,
+    "coupon_per_period_twd": "3.0萬",
+    "total_coupon_usd": 5902,
+    "total_coupon_twd": "約18.3萬",
+    "periods": [
+        {"t": 1, "start": "2026/6/24",  "end": "2026/7/23",  "pay": "2026/7/27",  "start_iso": "2026-06-24", "end_iso": "2026-07-23"},
+        {"t": 2, "start": "2026/7/24",  "end": "2026/8/24",  "pay": "2026/8/26",  "start_iso": "2026-07-24", "end_iso": "2026-08-24"},
+        {"t": 3, "start": "2026/8/25",  "end": "2026/9/23",  "pay": "2026/9/25",  "start_iso": "2026-08-25", "end_iso": "2026-09-23"},
+        {"t": 4, "start": "2026/9/24",  "end": "2026/10/23", "pay": "2026/10/27", "start_iso": "2026-09-24", "end_iso": "2026-10-23"},
+        {"t": 5, "start": "2026/10/26", "end": "2026/11/23", "pay": "2026/11/25", "start_iso": "2026-10-26", "end_iso": "2026-11-23"},
+        {"t": 6, "start": "2026/11/24", "end": "2026/12/23", "pay": "2026/12/28", "start_iso": "2026-11-24", "end_iso": "2026-12-23"},
+    ],
+    "underlyings": [
+        {"ticker": "TSM",  "name": "台積電 (TSM)",   "initial": 425.83,   "strike": 255.498,  "ko": 425.83,   "ki": 212.915},
+        {"ticker": "MU",   "name": "美光科技 (MU)",  "initial": 1020.76,  "strike": 612.456,  "ko": 1020.76,  "ki": 510.38},
+        {"ticker": "NVDA", "name": "輝達 (NVDA)",    "initial": 207.41,   "strike": 124.446,  "ko": 207.41,   "ki": 103.705},
+    ],
+}
 
-@app.route("/")
-def index():
-    return render_template_string(HTML_TEMPLATE, fcn=FCN, monthly_coupon=MONTHLY_COUPON * 100)
-
-@app.route("/conan")
-def index_conan():
-    return render_template_string(HTML_TEMPLATE, fcn=FCN_CONAN, monthly_coupon=MONTHLY_COUPON * 100)
+MONTHLY_COUPON = FCN["coupon_annual"] / 12 / 100
 
 
-@app.route("/api/prices")
-def get_prices():
+# ── 共用價格抓取 ──────────────────────────────────────────
+
+def fetch_prices(fcn):
+    parts = fcn["first_ko_date"].replace("/", "-").split("-")
+    first_ko = date(int(parts[0]), int(parts[1]), int(parts[2]))
+    lparts = fcn["last_ko_date"].replace("/", "-").split("-")
+    last_ko = date(int(lparts[0]), int(lparts[1]), int(lparts[2]))
+    mparts = fcn["maturity_date"].replace("/", "-").split("-")
+    maturity = date(int(mparts[0]), int(mparts[1]), int(mparts[2]))
+
     result = []
-    for u in FCN["underlyings"]:
+    for u in fcn["underlyings"]:
         try:
             ticker = yf.Ticker(u["ticker"])
             info = ticker.fast_info
@@ -70,15 +88,11 @@ def get_prices():
             prev_close = info.previous_close
             change = price - prev_close
             change_pct = change / prev_close * 100
-
-            # 距離各關鍵價位的距離%
             to_ko = (price / u["ko"] - 1) * 100
             to_ki = (price / u["ki"] - 1) * 100
             to_strike = (price / u["strike"] - 1) * 100
 
-            # 狀態判斷（KO 觀察期 2026/07/06 起才生效）
-            first_ko_date = date(2026, 7, 6)
-            ko_observation_active = date.today() >= first_ko_date
+            ko_observation_active = date.today() >= first_ko
             if ko_observation_active and price >= u["ko"]:
                 status = "KO_TRIGGERED"
             elif price <= u["ki"]:
@@ -109,7 +123,6 @@ def get_prices():
         except Exception as e:
             result.append({"ticker": u["ticker"], "error": str(e)})
 
-    # 判斷整張 FCN 的 worst-of
     worst = None
     for item in result:
         if "error" not in item:
@@ -117,10 +130,6 @@ def get_prices():
             if worst is None or pct < worst["price_pct_of_initial"]:
                 worst = item
 
-    # 計算剩餘天數與 KO 觀察狀態
-    maturity = date(2026, 10, 7)
-    first_ko = date(2026, 7, 6)
-    last_ko = date(2026, 10, 5)
     today = date.today()
     days_left = (maturity - today).days
     ko_active = first_ko <= today <= last_ko
@@ -136,6 +145,32 @@ def get_prices():
         "updated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
     })
 
+
+# ── 路由 ──────────────────────────────────────────────────
+
+@app.route("/")
+def index():
+    return render_template_string(HTML_TEMPLATE, fcn=FCN, api_url="/api/prices", monthly_coupon=MONTHLY_COUPON * 100)
+
+@app.route("/conan")
+def index_conan():
+    return render_template_string(HTML_TEMPLATE, fcn=FCN_CONAN, api_url="/api/prices", monthly_coupon=MONTHLY_COUPON * 100)
+
+@app.route("/sn3565")
+def index_sn3565():
+    mc = FCN_SN3565["coupon_annual"] / 12 / 100
+    return render_template_string(HTML_TEMPLATE, fcn=FCN_SN3565, api_url="/api/prices/sn3565", monthly_coupon=mc * 100)
+
+@app.route("/api/prices")
+def get_prices():
+    return fetch_prices(FCN)
+
+@app.route("/api/prices/sn3565")
+def get_prices_sn3565():
+    return fetch_prices(FCN_SN3565)
+
+
+# ── HTML 模板 ─────────────────────────────────────────────
 
 HTML_TEMPLATE = """
 <!DOCTYPE html>
@@ -160,6 +195,20 @@ HTML_TEMPLATE = """
   .ko-period-waiting { background: #1e293b; color: #64748b; border: 1px solid #374151; }
   .ko-period-text { font-size: 0.8rem; color: #64748b; }
   .ko-period-text strong { color: #94a3b8; }
+
+  /* 配息期程表 */
+  .coupon-schedule { padding: 14px 24px 0; }
+  .cs-title { font-size: 0.78rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+  .cs-table-wrap { overflow-x: auto; }
+  .cs-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+  .cs-table th { color: #64748b; font-weight: 600; padding: 6px 10px; text-align: left; border-bottom: 1px solid #2d3748; white-space: nowrap; }
+  .cs-table td { padding: 7px 10px; color: #94a3b8; border-bottom: 1px solid #1e2535; white-space: nowrap; }
+  .cs-table td small { color: #4b5563; font-size: 0.72rem; }
+  .cs-row-current td { background: rgba(16,185,129,0.07); color: #e2e8f0; }
+  .cs-row-current td:first-child { border-left: 2px solid #10b981; }
+  .cs-row-past td { color: #374151; }
+  .cs-total td { border-top: 1px solid #374151; color: #e2e8f0; font-weight: 700; padding-top: 8px; }
+
   .dist-pills { display: flex; gap: 8px; padding: 0 20px 14px; }
   .dist-pill { flex: 1; border-radius: 8px; padding: 8px 10px; text-align: center; }
   .dist-pill .dp-label { font-size: 0.68rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
@@ -201,7 +250,6 @@ HTML_TEMPLATE = """
   .positive { color: #10b981; }
   .negative { color: #ef4444; }
   .neutral { color: #64748b; }
-
   .price-pct { font-size: 0.82rem; color: #64748b; margin-top: 4px; }
   .price-pct span { color: #94a3b8; }
 
@@ -212,7 +260,6 @@ HTML_TEMPLATE = """
   .level-bar { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
   .level-value { width: 70px; text-align: right; font-size: 0.78rem; color: #94a3b8; flex-shrink: 0; }
   .level-dist { width: 55px; text-align: right; font-size: 0.72rem; flex-shrink: 0; }
-
   .bar-ko { background: #10b981; }
   .bar-strike { background: #f59e0b; }
   .bar-ki { background: #ef4444; }
@@ -228,21 +275,6 @@ HTML_TEMPLATE = """
   .gauge-labels { display: flex; justify-content: space-between; margin-top: 4px; font-size: 0.68rem; color: #4b5563; }
 
   .footer { text-align: center; padding: 16px; color: #374151; font-size: 0.75rem; }
-  .update-time { text-align: right; padding: 0 24px 8px; font-size: 0.75rem; color: #374151; }
-
-  /* 配息期程表 */
-  .coupon-schedule { padding: 14px 24px 0; }
-  .cs-title { font-size: 0.78rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
-  .cs-table-wrap { overflow-x: auto; }
-  .cs-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
-  .cs-table th { color: #64748b; font-weight: 600; padding: 6px 10px; text-align: left; border-bottom: 1px solid #2d3748; white-space: nowrap; }
-  .cs-table td { padding: 7px 10px; color: #94a3b8; border-bottom: 1px solid #1e2535; white-space: nowrap; }
-  .cs-table td small { color: #4b5563; font-size: 0.72rem; }
-  .cs-row-current td { background: rgba(16,185,129,0.07); color: #e2e8f0; }
-  .cs-row-current td:first-child { border-left: 2px solid #10b981; }
-  .cs-row-past td { color: #374151; }
-  .cs-total td { border-top: 1px solid #374151; color: #e2e8f0; font-weight: 700; padding-top: 8px; }
-  .cs-note td { color: #4b5563; font-size: 0.72rem; padding-top: 4px; border-bottom: none; }
 
   #loading { text-align: center; padding: 60px; color: #4b5563; font-size: 1rem; }
   .spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid #374151; border-top-color: #60a5fa; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 8px; vertical-align: middle; }
@@ -262,7 +294,7 @@ HTML_TEMPLATE = """
     <div class="meta-item">交易日 <span>{{ fcn.start_date }}</span></div>
     <div class="meta-item">到期日 <span>{{ fcn.maturity_date }}</span></div>
     <div class="meta-item">年化票息 <span>{{ "%.2f"|format(fcn.coupon_annual) }}%</span></div>
-    <div class="meta-item">月息 <span>約 2.31%・14.3萬台幣</span><span style="color:#4b5563;font-size:0.72rem;margin-left:4px;">（20萬USD × 27.74%÷12 × 匯率31）</span></div>
+    <div class="meta-item">月息 <span>{{ fcn.coupon_note }}</span></div>
     <div class="meta-item">KO 觀察 <span>每日（Memory型）</span></div>
     <div class="meta-item">幣別 <span>{{ fcn.currency }}</span></div>
   </div>
@@ -292,25 +324,18 @@ HTML_TEMPLATE = """
         </tr>
       </thead>
       <tbody>
-        <tr class="cs-row" data-start="2026-06-05" data-end="2026-07-06">
-          <td>1</td><td>2026/6/5</td><td>2026/7/6</td><td>2026/7/8</td>
-          <td>$4,623 USD・14.3萬台幣<small>（匯率31）</small></td>
+        {% for p in fcn.periods %}
+        <tr class="cs-row" data-start="{{ p.start_iso }}" data-end="{{ p.end_iso }}">
+          <td>{{ p.t }}</td>
+          <td>{{ p.start }}</td>
+          <td>{{ p.end }}</td>
+          <td>{{ p.pay }}</td>
+          <td>${{ "{:,}".format(fcn.coupon_per_period_usd) }} USD・{{ fcn.coupon_per_period_twd }}台幣<small>（匯率31）</small></td>
         </tr>
-        <tr class="cs-row" data-start="2026-07-07" data-end="2026-08-05">
-          <td>2</td><td>2026/7/7</td><td>2026/8/5</td><td>2026/8/7</td>
-          <td>$4,623 USD・14.3萬台幣<small>（匯率31）</small></td>
-        </tr>
-        <tr class="cs-row" data-start="2026-08-06" data-end="2026-09-08">
-          <td>3</td><td>2026/8/6</td><td>2026/9/8</td><td>2026/9/10</td>
-          <td>$4,623 USD・14.3萬台幣<small>（匯率31）</small></td>
-        </tr>
-        <tr class="cs-row" data-start="2026-09-09" data-end="2026-10-05">
-          <td>4</td><td>2026/9/9</td><td>2026/10/5</td><td>2026/10/7</td>
-          <td>$4,623 USD・14.3萬台幣<small>（匯率31）</small></td>
-        </tr>
+        {% endfor %}
         <tr class="cs-total">
-          <td colspan="4">總計（4期全拿）<small style="color:#4b5563;font-weight:400;">　※ 若提前 KO，僅累計至觸發當期為止</small></td>
-          <td>$18,493 USD・約57.3萬台幣<small>（匯率31）</small></td>
+          <td colspan="4">總計（{{ fcn.periods|length }}期全拿）<small style="color:#4b5563;font-weight:400;">　※ 若提前 KO，僅累計至觸發當期為止</small></td>
+          <td>${{ "{:,}".format(fcn.total_coupon_usd) }} USD・{{ fcn.total_coupon_twd }}台幣<small>（匯率31）</small></td>
         </tr>
       </tbody>
     </table>
@@ -366,45 +391,38 @@ HTML_TEMPLATE = """
 
 <script>
 const underlyings = {{ fcn.underlyings | tojson }};
+const API_URL = "{{ api_url }}";
 
 function statusText(s) {
   return { SAFE: '正常', KO_TRIGGERED: '已觸 KO', KI_TRIGGERED: '已觸 KI', BELOW_STRIKE: '低於執行價', ABOVE_KO_NOT_YET: '超過KO價（未到比價日）' }[s] || s;
 }
-function badgeClass(s) {
-  return 'badge-' + s;
-}
-function cardClass(s) {
-  return 'status-' + s;
-}
 
 function buildCard(u, data, isWorst) {
   const pct = data.price_pct_of_initial;
-
-  // 計算 gauge 位置（以 40%~120% 期初價為範圍）
-  const rangeMin = 40, rangeMax = 120;
+  const rangeMin = 35, rangeMax = 120;
   const toPos = v => Math.max(0, Math.min(100, (v - rangeMin) / (rangeMax - rangeMin) * 100));
-
-  const kiPos = toPos(60);
-  const strikePos = toPos(70);
-  const koPos = toPos(100);
+  const ki_pct = (u.ki / u.initial) * 100;
+  const strike_pct = (u.strike / u.initial) * 100;
+  const ko_pct = (u.ko / u.initial) * 100;
+  const kiPos = toPos(ki_pct);
+  const strikePos = toPos(strike_pct);
+  const koPos = toPos(ko_pct);
   const cursorPos = toPos(pct);
-
   const changeColor = data.change >= 0 ? 'positive' : 'negative';
   const changeSign = data.change >= 0 ? '+' : '';
-
   const distKOColor = data.to_ko_pct >= 0 ? 'positive' : (data.to_ko_pct < -15 ? 'negative' : 'neutral');
   const distKIColor = data.to_ki_pct <= 0 ? 'negative' : (data.to_ki_pct < 20 ? '#f59e0b' : 'positive');
   const distStrikeColor = data.to_strike_pct <= 0 ? 'negative' : 'neutral';
 
   return `
-  <div class="card ${cardClass(data.status)}${isWorst ? ' worst-of' : ''}">
+  <div class="card status-${data.status}${isWorst ? ' worst-of' : ''}">
     <div class="card-header">
       <div>
         <div class="card-ticker">${data.ticker}</div>
         <div class="card-name">${u.name}</div>
         ${isWorst ? '<span class="badge-WORST">⚠ Worst-of</span>' : ''}
       </div>
-      <span class="status-badge ${badgeClass(data.status)}">${statusText(data.status)}</span>
+      <span class="status-badge badge-${data.status}">${statusText(data.status)}</span>
     </div>
 
     <div class="price-section">
@@ -424,7 +442,7 @@ function buildCard(u, data, isWorst) {
         <div class="gauge-cursor" style="left:${cursorPos}%"></div>
       </div>
       <div class="gauge-labels">
-        <span>40%</span><span>KI 60%</span><span>Strike 70%</span><span>KO 100%</span><span>120%</span>
+        <span>35%</span><span>KI ${ki_pct.toFixed(0)}%</span><span>Strike ${strike_pct.toFixed(0)}%</span><span>KO 100%</span><span>120%</span>
       </div>
     </div>
 
@@ -450,12 +468,12 @@ function buildCard(u, data, isWorst) {
         <div class="level-dist" style="color:${distKOColor}">${data.to_ko_pct > 0 ? '+' : ''}${data.to_ko_pct.toFixed(1)}%</div>
       </div>
       <div class="level-row">
-        <div class="level-label" style="color:#f59e0b">― Strike <span style="color:#374151;font-size:0.65rem">70%</span></div>
+        <div class="level-label" style="color:#f59e0b">― Strike <span style="color:#374151;font-size:0.65rem">${strike_pct.toFixed(0)}%</span></div>
         <div class="level-value">$${u.strike.toFixed(2)}</div>
         <div class="level-dist" style="color:${distStrikeColor}">${data.to_strike_pct > 0 ? '+' : ''}${data.to_strike_pct.toFixed(1)}%</div>
       </div>
       <div class="level-row">
-        <div class="level-label" style="color:#ef4444">▼ KI 價 <span style="color:#374151;font-size:0.65rem">60%</span></div>
+        <div class="level-label" style="color:#ef4444">▼ KI 價 <span style="color:#374151;font-size:0.65rem">${ki_pct.toFixed(0)}%</span></div>
         <div class="level-value">$${u.ki.toFixed(2)}</div>
         <div class="level-dist" style="color:${distKIColor}">+${data.to_ki_pct.toFixed(1)}%</div>
       </div>
@@ -465,7 +483,7 @@ function buildCard(u, data, isWorst) {
 
 async function refresh() {
   try {
-    const res = await fetch('/api/prices');
+    const res = await fetch(API_URL);
     const data = await res.json();
 
     document.getElementById('loading').style.display = 'none';
@@ -476,7 +494,6 @@ async function refresh() {
     document.getElementById('days-left').textContent = data.days_left;
     document.getElementById('update-time').textContent = data.updated_at;
 
-    // KO 觀察期狀態
     const badge = document.getElementById('ko-badge');
     const sub = document.getElementById('ko-period-sub');
     if (data.ko_active) {
@@ -489,7 +506,6 @@ async function refresh() {
       sub.textContent = '首個比價日前不會觸發提前贖回';
     }
 
-    // 整體狀態
     const items = data.underlyings.filter(u => !u.error);
     const hasKI = items.some(u => u.status === 'KI_TRIGGERED');
     const allKO = items.every(u => u.status === 'KO_TRIGGERED');
@@ -509,7 +525,7 @@ async function refresh() {
       subEl.textContent = '符合提前贖回條件（需三檔同時達標）';
     } else if (aboveKONotYet) {
       statusEl.innerHTML = '<span style="color:#60a5fa">📅 超過KO但未到比價日</span>';
-      subEl.textContent = '保證配息期中，7/6 起才開始比價';
+      subEl.textContent = '保證配息期中';
     } else if (belowStrike) {
       statusEl.innerHTML = '<span style="color:#f59e0b">⚠ 部分低於執行價</span>';
       subEl.textContent = '需持續關注';
@@ -518,7 +534,6 @@ async function refresh() {
       subEl.textContent = '所有標的在執行價以上';
     }
 
-    // 渲染卡片
     const container = document.getElementById('cards-container');
     container.innerHTML = data.underlyings.map((item, i) => {
       if (item.error) return `<div class="card"><div class="card-header"><div class="card-ticker">${item.ticker}</div></div><div class="price-section" style="color:#ef4444">載入失敗：${item.error}</div></div>`;
