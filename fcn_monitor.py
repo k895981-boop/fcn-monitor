@@ -6,12 +6,12 @@ app = Flask(__name__)
 
 # FCN 商品參數
 FCN = {
-    "name": "BBVA 4個月期 USD 自動提前贖回 FCN",
+    "name": "BBVA 4個月期 USD 自動提前贖回 FCN・20萬 USD",
     "code": "很節省的黃大哥",
     "start_date": "2026/05/29",
-    "maturity_date": "2026/09/29",
+    "maturity_date": "2026/10/07",
     "first_ko_date": "2026/07/06",
-    "last_ko_date": "2026/09/07",
+    "last_ko_date": "2026/10/05",
     "coupon_annual": 27.74,
     "guaranteed_months": 1,
     "currency": "USD",
@@ -118,9 +118,9 @@ def get_prices():
                 worst = item
 
     # 計算剩餘天數與 KO 觀察狀態
-    maturity = date(2026, 9, 29)
+    maturity = date(2026, 10, 7)
     first_ko = date(2026, 7, 6)
-    last_ko = date(2026, 9, 7)
+    last_ko = date(2026, 10, 5)
     today = date.today()
     days_left = (maturity - today).days
     ko_active = first_ko <= today <= last_ko
@@ -146,7 +146,7 @@ HTML_TEMPLATE = """
 <title>FCN 即時監控 | {{ fcn.code }}</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Segoe UI', Arial, sans-serif; background: #0f1117; color: #e2e8f0; min-height: 100vh; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #0f1117; color: #e2e8f0; min-height: 100vh; font-size: 17px; }
 
   .header { background: linear-gradient(135deg, #1a1f35, #252d4a); padding: 20px 24px; border-bottom: 1px solid #2d3748; }
   .header h1 { font-size: 1.1rem; color: #94a3b8; font-weight: 400; }
@@ -230,6 +230,20 @@ HTML_TEMPLATE = """
   .footer { text-align: center; padding: 16px; color: #374151; font-size: 0.75rem; }
   .update-time { text-align: right; padding: 0 24px 8px; font-size: 0.75rem; color: #374151; }
 
+  /* 配息期程表 */
+  .coupon-schedule { padding: 14px 24px 0; }
+  .cs-title { font-size: 0.78rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+  .cs-table-wrap { overflow-x: auto; }
+  .cs-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+  .cs-table th { color: #64748b; font-weight: 600; padding: 6px 10px; text-align: left; border-bottom: 1px solid #2d3748; white-space: nowrap; }
+  .cs-table td { padding: 7px 10px; color: #94a3b8; border-bottom: 1px solid #1e2535; white-space: nowrap; }
+  .cs-table td small { color: #4b5563; font-size: 0.72rem; }
+  .cs-row-current td { background: rgba(16,185,129,0.07); color: #e2e8f0; }
+  .cs-row-current td:first-child { border-left: 2px solid #10b981; }
+  .cs-row-past td { color: #374151; }
+  .cs-total td { border-top: 1px solid #374151; color: #e2e8f0; font-weight: 700; padding-top: 8px; }
+  .cs-note td { color: #4b5563; font-size: 0.72rem; padding-top: 4px; border-bottom: none; }
+
   #loading { text-align: center; padding: 60px; color: #4b5563; font-size: 1rem; }
   .spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid #374151; border-top-color: #60a5fa; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 8px; vertical-align: middle; }
   @keyframes spin { to { transform: rotate(360deg); } }
@@ -245,7 +259,7 @@ HTML_TEMPLATE = """
   <h1>FCN 即時監控 | {{ fcn.code }}</h1>
   <h2>{{ fcn.name }}</h2>
   <div class="header-meta">
-    <div class="meta-item">定價日 <span>{{ fcn.start_date }}</span></div>
+    <div class="meta-item">交易日 <span>{{ fcn.start_date }}</span></div>
     <div class="meta-item">到期日 <span>{{ fcn.maturity_date }}</span></div>
     <div class="meta-item">年化票息 <span>{{ "%.2f"|format(fcn.coupon_annual) }}%</span></div>
     <div class="meta-item">月息 <span>約 2.31%・14.3萬台幣</span><span style="color:#4b5563;font-size:0.72rem;margin-left:4px;">（20萬USD × 27.74%÷12 × 匯率31）</span></div>
@@ -262,6 +276,45 @@ HTML_TEMPLATE = """
     保證配息期（前1個月不比價）
   </span>
   <span class="ko-period-text" id="ko-period-sub"></span>
+</div>
+
+<div class="coupon-schedule">
+  <div class="cs-title">配息期程</div>
+  <div class="cs-table-wrap">
+    <table class="cs-table">
+      <thead>
+        <tr>
+          <th>期</th>
+          <th>起始日</th>
+          <th>終止日</th>
+          <th>配息日</th>
+          <th>預計配息</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="cs-row" data-start="2026-06-05" data-end="2026-07-06">
+          <td>1</td><td>2026/6/5</td><td>2026/7/6</td><td>2026/7/8</td>
+          <td>$4,623 USD・14.3萬台幣<small>（匯率31）</small></td>
+        </tr>
+        <tr class="cs-row" data-start="2026-07-07" data-end="2026-08-05">
+          <td>2</td><td>2026/7/7</td><td>2026/8/5</td><td>2026/8/7</td>
+          <td>$4,623 USD・14.3萬台幣<small>（匯率31）</small></td>
+        </tr>
+        <tr class="cs-row" data-start="2026-08-06" data-end="2026-09-08">
+          <td>3</td><td>2026/8/6</td><td>2026/9/8</td><td>2026/9/10</td>
+          <td>$4,623 USD・14.3萬台幣<small>（匯率31）</small></td>
+        </tr>
+        <tr class="cs-row" data-start="2026-09-09" data-end="2026-10-05">
+          <td>4</td><td>2026/9/9</td><td>2026/10/5</td><td>2026/10/7</td>
+          <td>$4,623 USD・14.3萬台幣<small>（匯率31）</small></td>
+        </tr>
+        <tr class="cs-total">
+          <td colspan="4">總計（4期全拿）<small style="color:#4b5563;font-weight:400;">　※ 若提前 KO，僅累計至觸發當期為止</small></td>
+          <td>$18,493 USD・約57.3萬台幣<small>（匯率31）</small></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
 
 <div class="summary-bar">
@@ -297,15 +350,15 @@ HTML_TEMPLATE = """
   <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:16px;">
     <div style="background:#0f1117;border:0.5px solid #374151;border-top:3px solid #10b981;border-radius:10px;padding:10px 8px;">
       <div style="color:#10b981;font-size:0.78rem;font-weight:700;margin-bottom:6px;">KO 自動提前贖回</div>
-      <div style="color:#9ca3af;font-size:0.72rem;line-height:1.6;">三檔標的同一天全部 ≥ 期初價，產品提前結束，拿回本金＋已累積票息。只要有一檔未達標，當天就不觸發。</div>
+      <div style="color:#9ca3af;font-size:0.72rem;line-height:1.6;">三檔標的皆曾經 ≥ 期初價，產品提前結束，拿回本金＋已累積票息（未到的期數不計）。只要有一檔未達標，當天就不觸發。</div>
     </div>
     <div style="background:#0f1117;border:0.5px solid #374151;border-top:3px solid #f59e0b;border-radius:10px;padding:10px 8px;">
       <div style="color:#f59e0b;font-size:0.78rem;font-weight:700;margin-bottom:6px;">Strike 執行價</div>
-      <div style="color:#9ca3af;font-size:0.72rem;line-height:1.6;">到期時若最弱標的低於此價，將以此價格買進那檔股票，而非返還現金本金。</div>
+      <div style="color:#9ca3af;font-size:0.72rem;line-height:1.6;">到期時若最弱標的低於此價，將以此價格買進最弱標的股票，而非返還現金本金。</div>
     </div>
     <div style="background:#0f1117;border:0.5px solid #374151;border-top:3px solid #ef4444;border-radius:10px;padding:10px 8px;">
-      <div style="color:#ef4444;font-size:0.78rem;font-weight:700;margin-bottom:6px;">KI 保護失效線</div>
-      <div style="color:#9ca3af;font-size:0.72rem;line-height:1.6;">任一標的曾跌破此價，本金保護立即失效。到期時將以執行價（Strike）買進最弱標的的股票。</div>
+      <div style="color:#ef4444;font-size:0.78rem;font-weight:700;margin-bottom:6px;">KI 保護線</div>
+      <div style="color:#9ca3af;font-size:0.72rem;line-height:1.6;">若最後比價日，任一檔低於 KI 價，到期時將以執行價（Strike）買進最弱的標的。到期日前若曾經跌破，不在此限。</div>
     </div>
   </div>
   <div style="color:#374151;font-size:0.72rem;">資料來源：Yahoo Finance（15分鐘延遲）｜僅供參考，不構成投資建議</div>
@@ -476,6 +529,21 @@ async function refresh() {
     console.error(e);
   }
 }
+
+// 高亮當前配息期
+(function() {
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  document.querySelectorAll('.cs-row').forEach(row => {
+    const s = new Date(row.dataset.start);
+    const e = new Date(row.dataset.end);
+    if (today >= s && today <= e) {
+      row.classList.add('cs-row-current');
+    } else if (today > e) {
+      row.classList.add('cs-row-past');
+    }
+  });
+})();
 
 refresh();
 setInterval(refresh, 30000);
