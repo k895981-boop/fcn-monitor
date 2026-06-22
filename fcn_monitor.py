@@ -47,7 +47,7 @@ FCN = {
 MONTHLY_COUPON = FCN["coupon_annual"] / 12 / 100
 
 # 黃先生專屬版本
-FCN_CONAN = {**FCN, "code": "柯南"}
+FCN_CONAN = {**FCN, "code": "柯南/2026SN3011"}
 
 
 @app.route("/")
