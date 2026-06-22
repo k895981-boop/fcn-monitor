@@ -571,19 +571,25 @@ async function refresh() {
   }
 }
 
-// 高亮當前配息期
+// 高亮當前配息期；若尚未進入任何期，預設第1期（保證配息）
 (function() {
   const today = new Date();
   today.setHours(0,0,0,0);
-  document.querySelectorAll('.cs-row').forEach(row => {
+  const rows = document.querySelectorAll('.cs-row');
+  let foundCurrent = false;
+  rows.forEach(row => {
     const s = new Date(row.dataset.start);
     const e = new Date(row.dataset.end);
     if (today >= s && today <= e) {
       row.classList.add('cs-row-current');
+      foundCurrent = true;
     } else if (today > e) {
       row.classList.add('cs-row-past');
     }
   });
+  if (!foundCurrent && rows.length > 0) {
+    rows[0].classList.add('cs-row-current');
+  }
 })();
 
 refresh();
