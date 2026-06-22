@@ -69,7 +69,7 @@ FCN_SN3565 = {
 FCN_YQ = {
     **FCN_SN3565,
     "name": "Goldman Sachs 6個月期 USD 自動提前贖回 FCN・10萬 USD",
-    "code": "玉祺的客戶",
+    "code": "2026SN3565",
     "coupon_note": "約 1.97%・6.1萬台幣（10萬USD × 23.61%÷12 × 匯率31）",
     "coupon_per_period_usd": 1968,
     "coupon_per_period_twd": "6.1萬",
@@ -223,7 +223,7 @@ HTML_TEMPLATE = """
   .cs-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
   .cs-table th { color: #94a3b8; font-weight: 600; padding: 6px 10px; text-align: left; border-bottom: 1px solid #e2e8f0; white-space: nowrap; }
   .cs-table td { padding: 7px 10px; color: #64748b; border-bottom: 1px solid #f1f5f9; white-space: nowrap; }
-  .cs-table td small { color: #cbd5e1; font-size: 0.72rem; }
+  .cs-table td small { color: #94a3b8; font-size: 0.72rem; }
   .cs-row-current td { background: #f0fdf4; }
   .cs-row-current td:first-child { border-left: 2px solid #16a34a; color: #16a34a; font-weight: 700; font-size: 0.9rem; }
   .cs-row-current .cs-amount { color: #b45309; font-size: 0.92rem; font-weight: 700; }
@@ -360,7 +360,7 @@ HTML_TEMPLATE = """
         </tr>
         {% endfor %}
         <tr class="cs-total">
-          <td colspan="4">總計（{{ fcn.periods|length }}期全拿）<small style="color:#4b5563;font-weight:400;">　※ 若提前 KO，僅累計至觸發當期為止</small></td>
+          <td colspan="4">總計（{{ fcn.periods|length }}期全拿）<small style="color:#94a3b8;font-weight:400;">　※ 若提前 KO，僅累計至觸發當期為止</small></td>
           <td class="cs-amount">${{ "{:,}".format(fcn.total_coupon_usd) }} USD　<span class="cs-amount-twd">{{ fcn.total_coupon_twd }}台幣<small>（匯率31）</small></span></td>
         </tr>
       </tbody>
