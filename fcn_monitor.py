@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 FCN = {
     "name": "BBVA 4個月期 USD 自動提前贖回 FCN・20萬 USD",
-    "code": "很節省的黃大哥",
+    "code": "節省的黃大哥",
     "start_date": "2026/05/29",
     "maturity_date": "2026/10/07",
     "first_ko_date": "2026/07/06",
@@ -35,6 +35,17 @@ FCN = {
 }
 
 FCN_CONAN = {**FCN, "code": "2026SN3011"}
+
+FCN_YQ = {
+    **FCN_SN3565,
+    "name": "Goldman Sachs 6個月期 USD 自動提前贖回 FCN・10萬 USD",
+    "code": "玉祺的客戶",
+    "coupon_note": "約 1.97%・6.1萬台幣（10萬USD × 23.61%÷12 × 匯率31）",
+    "coupon_per_period_usd": 1968,
+    "coupon_per_period_twd": "6.1萬",
+    "total_coupon_usd": 11808,
+    "total_coupon_twd": "約36.6萬",
+}
 
 FCN_SN3565 = {
     "name": "Goldman Sachs 6個月期 USD 自動提前贖回 FCN・5萬 USD",
@@ -169,6 +180,15 @@ def get_prices():
 def get_prices_sn3565():
     return fetch_prices(FCN_SN3565)
 
+@app.route("/yq")
+def index_yq():
+    mc = FCN_YQ["coupon_annual"] / 12 / 100
+    return render_template_string(HTML_TEMPLATE, fcn=FCN_YQ, api_url="/api/prices/yq", monthly_coupon=mc * 100)
+
+@app.route("/api/prices/yq")
+def get_prices_yq():
+    return fetch_prices(FCN_YQ)
+
 
 # ── HTML 模板 ─────────────────────────────────────────────
 
@@ -181,108 +201,114 @@ HTML_TEMPLATE = """
 <title>FCN 即時監控 | {{ fcn.code }}</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Segoe UI', Arial, sans-serif; background: #0f1117; color: #e2e8f0; min-height: 100vh; font-size: 17px; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f8fafc; color: #0f172a; min-height: 100vh; font-size: 17px; }
 
-  .header { background: linear-gradient(135deg, #1a1f35, #252d4a); padding: 20px 24px; border-bottom: 1px solid #2d3748; }
+  .header { background: #ffffff; padding: 20px 24px; border-bottom: 1px solid #e2e8f0; }
   .header h1 { font-size: 1.1rem; color: #94a3b8; font-weight: 400; }
-  .header h2 { font-size: 1.5rem; color: #e2e8f0; margin: 4px 0; }
+  .header h2 { font-size: 1.5rem; color: #0f172a; margin: 4px 0; }
   .header-meta { display: flex; gap: 24px; margin-top: 8px; flex-wrap: wrap; }
-  .meta-item { font-size: 0.82rem; color: #64748b; }
-  .meta-item span { color: #94a3b8; font-weight: 600; }
-  .ko-period-bar { padding: 10px 24px; background: #0f1117; border-bottom: 1px solid #1e2535; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .meta-item { font-size: 0.82rem; color: #94a3b8; }
+  .meta-item span { color: #475569; font-weight: 600; }
+  .ko-period-bar { padding: 10px 24px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
   .ko-period-badge { padding: 4px 12px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; }
-  .ko-period-active { background: #064e3b; color: #10b981; border: 1px solid #10b981; }
-  .ko-period-waiting { background: #1e293b; color: #64748b; border: 1px solid #374151; }
-  .ko-period-text { font-size: 0.8rem; color: #64748b; }
-  .ko-period-text strong { color: #94a3b8; }
+  .ko-period-active { background: #f0fdf4; color: #16a34a; border: 1px solid #86efac; }
+  .ko-period-waiting { background: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1; }
+  .ko-period-text { font-size: 0.8rem; color: #94a3b8; }
+  .ko-period-text strong { color: #475569; }
 
   /* 配息期程表 */
   .coupon-schedule { padding: 14px 24px 0; }
-  .cs-title { font-size: 0.78rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+  .cs-title { font-size: 0.78rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
   .cs-table-wrap { overflow-x: auto; }
   .cs-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
-  .cs-table th { color: #64748b; font-weight: 600; padding: 6px 10px; text-align: left; border-bottom: 1px solid #2d3748; white-space: nowrap; }
-  .cs-table td { padding: 7px 10px; color: #94a3b8; border-bottom: 1px solid #1e2535; white-space: nowrap; }
-  .cs-table td small { color: #4b5563; font-size: 0.72rem; }
-  .cs-row-current td { background: rgba(16,185,129,0.07); color: #e2e8f0; }
-  .cs-row-current td:first-child { border-left: 2px solid #10b981; }
-  .cs-row-past td { color: #374151; }
-  .cs-total td { border-top: 1px solid #374151; color: #e2e8f0; font-weight: 700; padding-top: 8px; }
+  .cs-table th { color: #94a3b8; font-weight: 600; padding: 6px 10px; text-align: left; border-bottom: 1px solid #e2e8f0; white-space: nowrap; }
+  .cs-table td { padding: 7px 10px; color: #64748b; border-bottom: 1px solid #f1f5f9; white-space: nowrap; }
+  .cs-table td small { color: #cbd5e1; font-size: 0.72rem; }
+  .cs-row-current td { background: #f0fdf4; }
+  .cs-row-current td:first-child { border-left: 2px solid #16a34a; color: #16a34a; font-weight: 700; font-size: 0.9rem; }
+  .cs-row-current .cs-amount { color: #b45309; font-size: 0.92rem; font-weight: 700; }
+  .cs-row-current .cs-amount-twd { color: #d97706; font-size: 0.85rem; font-weight: 700; }
+  .cs-row-past td { color: #cbd5e1; }
+  .cs-amount { color: #475569; }
+  .cs-amount-twd { color: #64748b; font-size: 0.78rem; }
+  .cs-total td { border-top: 1px solid #e2e8f0; color: #0f172a; font-weight: 700; padding-top: 8px; }
+  .cs-total .cs-amount { color: #b45309; font-size: 0.92rem; }
+  .cs-total .cs-amount-twd { color: #d97706; }
 
   .dist-pills { display: flex; gap: 8px; padding: 0 20px 14px; }
   .dist-pill { flex: 1; border-radius: 8px; padding: 8px 10px; text-align: center; }
-  .dist-pill .dp-label { font-size: 0.68rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
+  .dist-pill .dp-label { font-size: 0.68rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; }
   .dist-pill .dp-value { font-size: 1.2rem; font-weight: 800; margin-top: 2px; }
-  .dp-ko { background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.2); }
-  .dp-strike { background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); }
-  .dp-ki { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.15); }
+  .dp-ko { background: #f0fdf4; border: 1px solid #bbf7d0; }
+  .dp-strike { background: #fffbeb; border: 1px solid #fde68a; }
+  .dp-ki { background: #fff1f2; border: 1px solid #fecdd3; }
 
-  .summary-bar { display: flex; gap: 16px; padding: 16px 24px; background: #141820; border-bottom: 1px solid #1e2535; flex-wrap: wrap; }
-  .summary-card { flex: 1; min-width: 160px; background: #1a1f35; border-radius: 8px; padding: 12px 16px; border: 1px solid #2d3748; }
-  .summary-card .label { font-size: 0.75rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
-  .summary-card .value { font-size: 1.4rem; font-weight: 700; margin-top: 4px; }
-  .summary-card .sub { font-size: 0.78rem; color: #64748b; margin-top: 2px; }
+  .summary-bar { display: flex; gap: 16px; padding: 16px 24px; background: #f1f5f9; border-bottom: 1px solid #e2e8f0; flex-wrap: wrap; }
+  .summary-card { flex: 1; min-width: 160px; background: #ffffff; border-radius: 8px; padding: 12px 16px; border: 1px solid #e2e8f0; }
+  .summary-card .label { font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; }
+  .summary-card .value { font-size: 1.4rem; font-weight: 700; margin-top: 4px; color: #0f172a; }
+  .summary-card .sub { font-size: 0.78rem; color: #94a3b8; margin-top: 2px; }
 
   .cards { display: flex; gap: 16px; padding: 20px 24px; flex-wrap: wrap; }
-  .card { flex: 1; min-width: 300px; background: #1a1f35; border-radius: 12px; border: 1px solid #2d3748; overflow: hidden; transition: border-color 0.3s; }
-  .card.status-SAFE { border-color: #2d3748; }
-  .card.status-KO_TRIGGERED { border-color: #10b981; box-shadow: 0 0 20px rgba(16,185,129,0.15); }
-  .card.status-KI_TRIGGERED { border-color: #ef4444; box-shadow: 0 0 20px rgba(239,68,68,0.2); }
-  .card.status-BELOW_STRIKE { border-color: #f59e0b; box-shadow: 0 0 20px rgba(245,158,11,0.1); }
-  .card.status-ABOVE_KO_NOT_YET { border-color: #3b82f6; box-shadow: 0 0 20px rgba(59,130,246,0.1); }
-  .card.worst-of { border-top: 3px solid #f59e0b; }
+  .card { flex: 1; min-width: 300px; background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; transition: border-color 0.3s; }
+  .card.status-SAFE { border-color: #e2e8f0; }
+  .card.status-KO_TRIGGERED { border-color: #16a34a; box-shadow: 0 0 20px rgba(22,163,74,0.1); }
+  .card.status-KI_TRIGGERED { border-color: #dc2626; box-shadow: 0 0 20px rgba(220,38,38,0.1); }
+  .card.status-BELOW_STRIKE { border-color: #d97706; box-shadow: 0 0 20px rgba(217,119,6,0.1); }
+  .card.status-ABOVE_KO_NOT_YET { border-color: #2563eb; box-shadow: 0 0 20px rgba(37,99,235,0.08); }
+  .card.worst-of { border-top: 3px solid #d97706; }
 
-  .card-header { padding: 16px 20px 12px; background: #141820; display: flex; justify-content: space-between; align-items: flex-start; }
-  .card-ticker { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; }
-  .card-name { font-size: 0.78rem; color: #64748b; margin-top: 2px; }
+  .card-header { padding: 16px 20px 12px; background: #f8fafc; display: flex; justify-content: space-between; align-items: flex-start; }
+  .card-ticker { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; color: #0f172a; }
+  .card-name { font-size: 0.78rem; color: #94a3b8; margin-top: 2px; }
   .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 600; }
-  .badge-SAFE { background: #1e293b; color: #64748b; }
-  .badge-KO_TRIGGERED { background: #064e3b; color: #10b981; }
-  .badge-KI_TRIGGERED { background: #450a0a; color: #ef4444; }
-  .badge-BELOW_STRIKE { background: #451a03; color: #f59e0b; }
-  .badge-ABOVE_KO_NOT_YET { background: #1e3a5f; color: #60a5fa; }
-  .badge-WORST { background: #422006; color: #fb923c; margin-top: 4px; display: block; text-align: center; }
+  .badge-SAFE { background: #f1f5f9; color: #64748b; }
+  .badge-KO_TRIGGERED { background: #f0fdf4; color: #16a34a; border: 1px solid #86efac; }
+  .badge-KI_TRIGGERED { background: #fff1f2; color: #dc2626; border: 1px solid #fecdd3; }
+  .badge-BELOW_STRIKE { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
+  .badge-ABOVE_KO_NOT_YET { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+  .badge-WORST { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; margin-top: 4px; display: block; text-align: center; }
 
   .price-section { padding: 16px 20px; }
   .current-price { display: flex; align-items: baseline; gap: 10px; }
-  .price-value { font-size: 2rem; font-weight: 700; }
+  .price-value { font-size: 2rem; font-weight: 700; color: #0f172a; }
   .price-change { font-size: 0.9rem; font-weight: 600; }
-  .positive { color: #10b981; }
-  .negative { color: #ef4444; }
-  .neutral { color: #64748b; }
-  .price-pct { font-size: 0.82rem; color: #64748b; margin-top: 4px; }
-  .price-pct span { color: #94a3b8; }
+  .positive { color: #16a34a; }
+  .negative { color: #dc2626; }
+  .neutral { color: #94a3b8; }
+  .price-pct { font-size: 0.82rem; color: #94a3b8; margin-top: 4px; }
+  .price-pct span { color: #475569; }
 
   .levels { padding: 0 20px 16px; display: flex; flex-direction: column; gap: 8px; }
   .level-row { display: flex; align-items: center; gap: 10px; }
-  .level-label { width: 90px; font-size: 0.75rem; color: #64748b; flex-shrink: 0; }
-  .level-bar-container { flex: 1; background: #0f1117; border-radius: 4px; height: 6px; position: relative; overflow: visible; }
+  .level-label { width: 90px; font-size: 0.75rem; color: #94a3b8; flex-shrink: 0; }
+  .level-bar-container { flex: 1; background: #f1f5f9; border-radius: 4px; height: 6px; position: relative; overflow: visible; }
   .level-bar { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
-  .level-value { width: 70px; text-align: right; font-size: 0.78rem; color: #94a3b8; flex-shrink: 0; }
+  .level-value { width: 70px; text-align: right; font-size: 0.78rem; color: #475569; flex-shrink: 0; }
   .level-dist { width: 55px; text-align: right; font-size: 0.72rem; flex-shrink: 0; }
-  .bar-ko { background: #10b981; }
-  .bar-strike { background: #f59e0b; }
-  .bar-ki { background: #ef4444; }
-  .bar-current { position: absolute; top: -3px; width: 2px; height: 12px; background: #fff; border-radius: 1px; }
+  .bar-ko { background: #16a34a; }
+  .bar-strike { background: #d97706; }
+  .bar-ki { background: #dc2626; }
+  .bar-current { position: absolute; top: -3px; width: 2px; height: 12px; background: #0f172a; border-radius: 1px; }
 
   .gauge-section { padding: 0 20px 20px; }
-  .gauge-label { font-size: 0.75rem; color: #64748b; margin-bottom: 8px; }
-  .gauge-track { background: #0f1117; border-radius: 6px; height: 24px; position: relative; overflow: hidden; }
-  .gauge-ki-zone { position: absolute; left: 0; height: 100%; background: rgba(239,68,68,0.15); border-right: 1px dashed #ef4444; }
-  .gauge-strike-zone { position: absolute; height: 100%; background: rgba(245,158,11,0.1); border-right: 1px dashed #f59e0b; }
-  .gauge-ko-line { position: absolute; height: 100%; width: 2px; background: #10b981; }
-  .gauge-cursor { position: absolute; top: 0; height: 100%; width: 3px; background: #fff; border-radius: 1px; transition: left 0.5s ease; }
-  .gauge-labels { display: flex; justify-content: space-between; margin-top: 4px; font-size: 0.68rem; color: #4b5563; }
+  .gauge-label { font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px; }
+  .gauge-track { background: #f1f5f9; border-radius: 6px; height: 24px; position: relative; overflow: hidden; }
+  .gauge-ki-zone { position: absolute; left: 0; height: 100%; background: rgba(220,38,38,0.08); border-right: 1px dashed #fca5a5; }
+  .gauge-strike-zone { position: absolute; height: 100%; background: rgba(217,119,6,0.07); border-right: 1px dashed #fde68a; }
+  .gauge-ko-line { position: absolute; height: 100%; width: 2px; background: #16a34a; }
+  .gauge-cursor { position: absolute; top: 0; height: 100%; width: 3px; background: #0f172a; border-radius: 1px; transition: left 0.5s ease; }
+  .gauge-labels { display: flex; justify-content: space-between; margin-top: 4px; font-size: 0.68rem; color: #94a3b8; }
 
-  .footer { text-align: center; padding: 16px; color: #374151; font-size: 0.75rem; }
+  .footer { text-align: center; padding: 16px; color: #94a3b8; font-size: 0.75rem; }
 
-  #loading { text-align: center; padding: 60px; color: #4b5563; font-size: 1rem; }
-  .spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid #374151; border-top-color: #60a5fa; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 8px; vertical-align: middle; }
+  #loading { text-align: center; padding: 60px; color: #94a3b8; font-size: 1rem; }
+  .spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid #e2e8f0; border-top-color: #2563eb; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 8px; vertical-align: middle; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
   .alert-banner { margin: 0 24px 16px; padding: 12px 16px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; display: none; }
-  .alert-ko { background: #064e3b; border: 1px solid #10b981; color: #34d399; }
-  .alert-ki { background: #450a0a; border: 1px solid #ef4444; color: #fca5a5; }
+  .alert-ko { background: #f0fdf4; border: 1px solid #86efac; color: #15803d; }
+  .alert-ki { background: #fff1f2; border: 1px solid #fecdd3; color: #dc2626; }
 </style>
 </head>
 <body>
@@ -330,12 +356,12 @@ HTML_TEMPLATE = """
           <td>{{ p.start }}</td>
           <td>{{ p.end }}</td>
           <td>{{ p.pay }}</td>
-          <td>${{ "{:,}".format(fcn.coupon_per_period_usd) }} USD・{{ fcn.coupon_per_period_twd }}台幣<small>（匯率31）</small></td>
+          <td class="cs-amount">${{ "{:,}".format(fcn.coupon_per_period_usd) }} USD　<span class="cs-amount-twd">{{ fcn.coupon_per_period_twd }}台幣<small>（匯率31）</small></span></td>
         </tr>
         {% endfor %}
         <tr class="cs-total">
           <td colspan="4">總計（{{ fcn.periods|length }}期全拿）<small style="color:#4b5563;font-weight:400;">　※ 若提前 KO，僅累計至觸發當期為止</small></td>
-          <td>${{ "{:,}".format(fcn.total_coupon_usd) }} USD・{{ fcn.total_coupon_twd }}台幣<small>（匯率31）</small></td>
+          <td class="cs-amount">${{ "{:,}".format(fcn.total_coupon_usd) }} USD　<span class="cs-amount-twd">{{ fcn.total_coupon_twd }}台幣<small>（匯率31）</small></span></td>
         </tr>
       </tbody>
     </table>
@@ -373,20 +399,20 @@ HTML_TEMPLATE = """
 
 <div class="footer">
   <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:16px;">
-    <div style="background:#0f1117;border:0.5px solid #374151;border-top:3px solid #10b981;border-radius:10px;padding:10px 8px;">
-      <div style="color:#10b981;font-size:0.78rem;font-weight:700;margin-bottom:6px;">KO 自動提前贖回</div>
-      <div style="color:#9ca3af;font-size:0.72rem;line-height:1.6;">三檔標的皆曾經 ≥ 期初價，產品提前結束，拿回本金＋已累積票息（未到的期數不計）。只要有一檔未達標，當天就不觸發。</div>
+    <div style="background:#f0fdf4;border:0.5px solid #bbf7d0;border-top:3px solid #16a34a;border-radius:10px;padding:10px 8px;">
+      <div style="color:#15803d;font-size:0.78rem;font-weight:700;margin-bottom:6px;">KO 自動提前贖回</div>
+      <div style="color:#475569;font-size:0.72rem;line-height:1.6;">三檔標的皆曾經 ≥ 期初價，產品提前結束，拿回本金＋已累積票息（未到的期數不計）。只要有一檔未達標，當天就不觸發。</div>
     </div>
-    <div style="background:#0f1117;border:0.5px solid #374151;border-top:3px solid #f59e0b;border-radius:10px;padding:10px 8px;">
-      <div style="color:#f59e0b;font-size:0.78rem;font-weight:700;margin-bottom:6px;">Strike 執行價</div>
-      <div style="color:#9ca3af;font-size:0.72rem;line-height:1.6;">到期時若最弱標的低於此價，將以此價格買進最弱標的股票，而非返還現金本金。</div>
+    <div style="background:#fffbeb;border:0.5px solid #fde68a;border-top:3px solid #d97706;border-radius:10px;padding:10px 8px;">
+      <div style="color:#b45309;font-size:0.78rem;font-weight:700;margin-bottom:6px;">Strike 執行價</div>
+      <div style="color:#475569;font-size:0.72rem;line-height:1.6;">到期時若最弱標的低於此價，將以此價格買進最弱標的股票，而非返還現金本金。</div>
     </div>
-    <div style="background:#0f1117;border:0.5px solid #374151;border-top:3px solid #ef4444;border-radius:10px;padding:10px 8px;">
-      <div style="color:#ef4444;font-size:0.78rem;font-weight:700;margin-bottom:6px;">KI 保護價</div>
-      <div style="color:#9ca3af;font-size:0.72rem;line-height:1.6;">若最後比價日，任一檔低於 KI 價，到期時將以執行價（Strike）買進最弱的標的。到期日前若曾經跌破，不在此限。</div>
+    <div style="background:#fff1f2;border:0.5px solid #fecdd3;border-top:3px solid #dc2626;border-radius:10px;padding:10px 8px;">
+      <div style="color:#dc2626;font-size:0.78rem;font-weight:700;margin-bottom:6px;">KI 保護價</div>
+      <div style="color:#475569;font-size:0.72rem;line-height:1.6;">若最後比價日，任一檔低於 KI 價，到期時將以執行價（Strike）買進最弱的標的。到期日前若曾經跌破，不在此限。</div>
     </div>
   </div>
-  <div style="color:#374151;font-size:0.72rem;">資料來源：Yahoo Finance（15分鐘延遲）｜僅供參考，不構成投資建議</div>
+  <div style="color:#cbd5e1;font-size:0.72rem;">資料來源：Yahoo Finance（15分鐘延遲）｜僅供參考，不構成投資建議</div>
 </div>
 
 <script>
