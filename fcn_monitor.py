@@ -382,7 +382,7 @@ HTML_TEMPLATE = """
       <div style="color:#9ca3af;font-size:0.72rem;line-height:1.6;">到期時若最弱標的低於此價，將以此價格買進最弱標的股票，而非返還現金本金。</div>
     </div>
     <div style="background:#0f1117;border:0.5px solid #374151;border-top:3px solid #ef4444;border-radius:10px;padding:10px 8px;">
-      <div style="color:#ef4444;font-size:0.78rem;font-weight:700;margin-bottom:6px;">KI 保護線</div>
+      <div style="color:#ef4444;font-size:0.78rem;font-weight:700;margin-bottom:6px;">KI 保護價</div>
       <div style="color:#9ca3af;font-size:0.72rem;line-height:1.6;">若最後比價日，任一檔低於 KI 價，到期時將以執行價（Strike）買進最弱的標的。到期日前若曾經跌破，不在此限。</div>
     </div>
   </div>
