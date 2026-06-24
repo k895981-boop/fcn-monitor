@@ -200,7 +200,7 @@ HTML_TEMPLATE = """
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FCN 即時監控 | {{ fcn.code }}</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
   body { font-family: 'Segoe UI', Arial, sans-serif; background: #f8fafc; color: #0f172a; min-height: 100vh; font-size: 17px; }
 
   .header { background: #ffffff; padding: 20px 24px; border-bottom: 1px solid #e2e8f0; }
@@ -310,6 +310,15 @@ HTML_TEMPLATE = """
   .alert-ko { background: #f0fdf4; border: 1px solid #86efac; color: #15803d; }
   .alert-ki { background: #fff1f2; border: 1px solid #fecdd3; color: #dc2626; }
 </style>
+<script>
+  document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+  document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && ['c','u','s','a','p'].includes(e.key.toLowerCase())) {
+      e.preventDefault();
+    }
+  });
+  document.addEventListener('dragstart', function(e) { e.preventDefault(); });
+</script>
 </head>
 <body>
 
