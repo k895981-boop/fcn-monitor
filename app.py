@@ -93,11 +93,42 @@ FCN_YQ = {
     "total_coupon_twd": "約36.6萬",
 }
 
+FCN_DEMO = {
+    "name": "示範商品・6個月期 USD 自動提前贖回 FCN",
+    "code": "DEMO-2026",
+    "start_date": "2026/01/15",
+    "maturity_date": "2026/07/15",
+    "first_ko_date": "2026/02/15",
+    "last_ko_date": "2026/07/13",
+    "coupon_annual": 15.00,
+    "guaranteed_months": 1,
+    "currency": "USD",
+    "coupon_note": "約 1.25%・3.9萬台幣（100,000USD × 15%÷12 × 匯率31）",
+    "coupon_per_period_usd": 1250,
+    "coupon_per_period_twd": "3.9萬",
+    "total_coupon_usd": 7500,
+    "total_coupon_twd": "約23.3萬",
+    "periods": [
+        {"t": 1, "start": "2026/01/15", "end": "2026/02/14", "pay": "2026/02/16", "start_iso": "2026-01-15", "end_iso": "2026-02-14"},
+        {"t": 2, "start": "2026/02/15", "end": "2026/03/14", "pay": "2026/03/16", "start_iso": "2026-02-15", "end_iso": "2026-03-14"},
+        {"t": 3, "start": "2026/03/15", "end": "2026/04/14", "pay": "2026/04/16", "start_iso": "2026-03-15", "end_iso": "2026-04-14"},
+        {"t": 4, "start": "2026/04/15", "end": "2026/05/14", "pay": "2026/05/18", "start_iso": "2026-04-15", "end_iso": "2026-05-14"},
+        {"t": 5, "start": "2026/05/15", "end": "2026/06/14", "pay": "2026/06/16", "start_iso": "2026-05-15", "end_iso": "2026-06-14"},
+        {"t": 6, "start": "2026/06/15", "end": "2026/07/13", "pay": "2026/07/15", "start_iso": "2026-06-15", "end_iso": "2026-07-13"},
+    ],
+    "underlyings": [
+        {"ticker": "AAPL", "name": "蘋果 (AAPL)", "initial": 228.00, "strike": 159.600, "ko": 228.00, "ki": 136.800},
+        {"ticker": "MSFT", "name": "微軟 (MSFT)", "initial": 420.00, "strike": 294.000, "ko": 420.00, "ki": 252.000},
+        {"ticker": "NVDA", "name": "輝達 (NVDA)", "initial": 134.00, "strike":  93.800, "ko": 134.00, "ki":  80.400},
+    ],
+}
+
 PRODUCTS = {
     "":       FCN,
     "conan":  FCN_CONAN,
     "sn3565": FCN_SN3565,
     "yq":     FCN_YQ,
+    "demo":   FCN_DEMO,
 }
 
 # ── 價格抓取（快取 30 秒）──────────────────────────────────
