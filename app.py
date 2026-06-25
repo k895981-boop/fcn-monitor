@@ -112,7 +112,8 @@ def fetch_prices(tickers_key: str, underlyings: tuple, first_ko_str: str, last_k
     today    = date.today()
 
     result = []
-    for u in underlyings:
+    for u_raw in underlyings:
+        u = dict(u_raw) if not isinstance(u_raw, dict) else u_raw
         try:
             info       = yf.Ticker(u["ticker"]).fast_info
             price      = float(info.last_price)
