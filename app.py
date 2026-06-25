@@ -436,13 +436,53 @@ body{{font-family:'Segoe UI',Arial,sans-serif;background:#f8fafc;color:#0f172a;f
 .legend-title{{font-size:.76rem;font-weight:700;margin-bottom:5px}}
 .legend-body{{font-size:.7rem;color:#475569;line-height:1.55}}
 .footer-note{{text-align:center;color:#94a3b8;font-size:.7rem}}
-@media(max-width:480px){{
+@media(max-width:600px){{
   body{{font-size:15px}}
-  .cards{{padding:12px}}
+  /* 頁首 */
+  .header{{padding:12px 14px}}
+  .header h1{{font-size:.82rem}}
+  .header h2{{font-size:1.05rem;line-height:1.45}}
+  .header-meta{{gap:6px 10px}}
+  .meta-item{{font-size:.7rem}}
+  /* KO 期間列 */
+  .ko-period-bar{{padding:8px 14px;flex-direction:column;align-items:flex-start;gap:5px}}
+  .ko-period-badge{{font-size:.7rem;padding:3px 10px}}
+  .ko-period-text{{font-size:.7rem}}
+  /* 配息期程 */
+  .coupon-schedule{{padding:10px 14px 0}}
+  .cs-table th,.cs-table td{{padding:6px 8px;font-size:.72rem}}
+  /* 摘要列 */
+  .summary-bar{{padding:8px 14px;gap:7px}}
+  .summary-card{{min-width:calc(50% - 4px);padding:8px 10px}}
+  .summary-card .value{{font-size:1.05rem}}
+  .summary-card .label{{font-size:.65rem}}
+  /* 警示橫幅 */
+  .alert-banner{{margin:0 14px 10px;padding:8px 12px;font-size:.76rem}}
+  /* 個股卡片 */
+  .cards{{padding:10px 14px;gap:10px}}
   .card{{min-width:100%}}
+  .card-header{{padding:11px 14px 8px}}
+  .card-ticker{{font-size:1.25rem}}
+  .card-name{{font-size:.7rem}}
+  .status-badge{{font-size:.65rem;padding:3px 8px}}
+  .price-section{{padding:11px 14px}}
+  .price-value{{font-size:1.65rem}}
+  .price-change{{font-size:.78rem}}
+  .price-pct{{font-size:.72rem}}
+  .gauge-section{{padding:0 14px 11px}}
+  .gauge-track{{height:18px}}
+  .gauge-labels{{font-size:.6rem}}
+  .dist-pills{{padding:0 14px 11px;gap:5px}}
+  .dp-label{{font-size:.6rem}}
+  .dp-value{{font-size:1rem}}
+  .levels{{padding:0 14px 14px;gap:5px}}
+  .level-label{{font-size:.68rem;width:80px}}
+  .level-value{{font-size:.72rem;width:65px}}
+  .level-dist{{font-size:.66rem}}
+  /* 圖例 */
   .footer-legend{{grid-template-columns:1fr}}
-  .summary-bar{{gap:8px}}
-  .summary-card{{min-width:calc(50% - 4px)}}
+  .footer{{padding:10px 14px 16px}}
+  .footer-note{{font-size:.66rem}}
 }}
 </style>
 </head>
