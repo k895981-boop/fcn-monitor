@@ -3,6 +3,8 @@ import streamlit.components.v1 as components
 import yfinance as yf
 from datetime import datetime, date
 import time
+import json as _json
+import base64 as _b64
 
 st.set_page_config(page_title="FCN 即時監控", layout="wide", page_icon="📊")
 
@@ -498,14 +500,22 @@ body{{font-family:'Segoe UI',Arial,sans-serif;background:#f8fafc;color:#0f172a;f
 # ── 主程式 ────────────────────────────────────────────────
 
 product_key = st.query_params.get("product", "")
-fcn = PRODUCTS.get(product_key)
+d_param     = st.query_params.get("d", "")
 
-if fcn is None:
+if d_param:
+    try:
+        _padded = d_param + "=" * ((4 - len(d_param) % 4) % 4)
+        fcn = _json.loads(_b64.urlsafe_b64decode(_padded).decode())
+    except Exception as e:
+        st.error(f"連結解碼失敗：{e}")
+        st.stop()
+    tickers_key = "custom|" + ",".join(u["ticker"] for u in fcn["underlyings"])
+elif product_key in PRODUCTS:
+    fcn = PRODUCTS[product_key]
+    tickers_key = product_key + "|" + ",".join(u["ticker"] for u in fcn["underlyings"])
+else:
     st.error("找不到此商品頁面，請確認連結是否正確。")
     st.stop()
-
-# 抓取價格（cache key 用 ticker 組合 + product key 避免衝突）
-tickers_key = product_key + "|" + ",".join(u["ticker"] for u in fcn["underlyings"])
 data = fetch_prices(
     tickers_key,
     tuple(tuple(u.items()) for u in fcn["underlyings"]),
