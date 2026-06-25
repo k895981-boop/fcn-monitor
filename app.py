@@ -436,6 +436,7 @@ body{{font-family:'Segoe UI',Arial,sans-serif;background:#f8fafc;color:#0f172a;f
 .legend-title{{font-size:.76rem;font-weight:700;margin-bottom:5px}}
 .legend-body{{font-size:.7rem;color:#475569;line-height:1.55}}
 .footer-note{{text-align:center;color:#94a3b8;font-size:.7rem}}
+.wm-corner{{position:fixed;bottom:10px;right:12px;font-size:.6rem;color:rgba(148,163,184,.6);pointer-events:none;z-index:9999;letter-spacing:.04em}}
 @media(max-width:600px){{
   body{{font-size:15px}}
   /* 頁首 */
@@ -544,6 +545,7 @@ body{{font-family:'Segoe UI',Arial,sans-serif;background:#f8fafc;color:#0f172a;f
 <div class="alert-banner alert-ko" {alert_ko}>✅ 三檔標的今日全部 ≥ 期初價！符合提前贖回條件。</div>
 <div class="alert-banner alert-ki" {alert_ki}>⚠️ 警告：有標的已跌破 KI（觸及）價位，本金保護已失效！</div>
 
+<div class="wm-corner">結構商品全能工作站</div>
 <div class="cards">{cards_html}</div>
 
 <div class="footer">
