@@ -493,7 +493,7 @@ body{{font-family:'Segoe UI',Arial,sans-serif;background:#f8fafc;color:#0f172a;f
 <body>
 
 <div class="header">
-  <h1>FCN 即時監控 | {fcn["code"]}</h1>
+  <h1>FCN 即時監控 | {fcn["code"]}　<span style="font-size:.55em;background:rgba(255,255,255,.18);color:#e2e8f0;padding:3px 10px;border-radius:20px;font-weight:400;vertical-align:middle">🔄 30 秒自動更新</span></h1>
   <h2>{fcn["name"]}</h2>
   <div class="header-meta">
     <div class="meta-item">交易日 <span>{fcn["start_date"]}</span></div>
@@ -578,6 +578,22 @@ body{{font-family:'Segoe UI',Arial,sans-serif;background:#f8fafc;color:#0f172a;f
 product_key = st.query_params.get("product", "")
 d_param     = st.query_params.get("d", "")
 
+_SHORT_TOP = {'n':'name','c':'code','sd':'start_date','md':'maturity_date',
+              'f1':'first_ko_date','fn':'last_ko_date','ca':'coupon_annual',
+              'gm':'guaranteed_months','cy':'currency',
+              'pu':'coupon_per_period_usd','pt':'coupon_per_period_twd',
+              'tu':'total_coupon_usd','tt':'total_coupon_twd',
+              'ps':'periods','us':'underlyings'}
+_SHORT_PER = {'s':'start','e':'end','p':'pay'}
+_SHORT_UND = {'t':'ticker','n':'name','i':'initial','k':'ko','st':'strike'}
+
+def _expand_fcn(d):
+    if 'n' in d or 'ps' in d:
+        d = {_SHORT_TOP.get(k, k): v for k, v in d.items()}
+        d['periods']     = [{_SHORT_PER.get(k,k): v for k,v in p.items()} for p in d.get('periods',[])]
+        d['underlyings'] = [{_SHORT_UND.get(k,k): v for k,v in u.items()} for u in d.get('underlyings',[])]
+    return d
+
 if d_param:
     try:
         _padded = d_param + "=" * ((4 - len(d_param) % 4) % 4)
@@ -586,8 +602,8 @@ if d_param:
             import zlib as _zlib
             _raw = _zlib.decompress(_raw)
         except Exception:
-            pass  # 舊格式（未壓縮），直接使用
-        fcn = _json.loads(_raw.decode())
+            pass
+        fcn = _expand_fcn(_json.loads(_raw.decode()))
     except Exception as e:
         st.error(f"連結解碼失敗：{e}")
         st.stop()
