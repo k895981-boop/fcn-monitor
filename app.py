@@ -577,6 +577,20 @@ body{{font-family:'Segoe UI',Arial,sans-serif;background:#f8fafc;color:#0f172a;f
 
 product_key = st.query_params.get("product", "")
 d_param     = st.query_params.get("d", "")
+_s_param    = st.query_params.get("s", "")
+
+# ── Supabase 短碼 → 還原 d_param ──
+if _s_param and not d_param:
+    try:
+        from supabase import create_client as _sb_client
+        _SB_URL = "https://ezvuqxyovbwxxsmxdxro.supabase.co"
+        _SB_KEY = "sb_publishable_d7w30uoMxtN0vj_suh9osg_ogle2RZL"
+        _sb = _sb_client(_SB_URL, _SB_KEY)
+        _res = _sb.table('short_urls').select('data').eq('code', _s_param).single().execute()
+        d_param = _res.data['data']
+    except Exception as _sbe:
+        st.error(f"短網址解析失敗：{_sbe}")
+        st.stop()
 
 _SHORT_TOP = {'n':'name','c':'code','sd':'start_date','md':'maturity_date',
               'f1':'first_ko_date','fn':'last_ko_date','ca':'coupon_annual',
