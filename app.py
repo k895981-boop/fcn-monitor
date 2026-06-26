@@ -496,6 +496,8 @@ body{{font-family:'Segoe UI',Arial,sans-serif;background:#f8fafc;color:#0f172a;f
   <h1>FCN 即時監控 | {fcn["code"]}　<span style="font-size:.9em;color:#94a3b8;font-weight:400">🔄 30 秒自動更新</span></h1>
   <h2>{fcn["name"]}</h2>
   <div class="header-meta">
+    {f'<div class="meta-item">客戶 <span>{fcn["client_name"]}</span></div>' if fcn.get("client_name") else ""}
+    {f'<div class="meta-item">投入金額 <span>${fcn["principal_usd"]:,} USD　≈　{round(fcn["principal_usd"]*fcn.get("fx_rate",31)/10000):.0f} 萬台幣</span></div>' if fcn.get("principal_usd") else ""}
     <div class="meta-item">交易日 <span>{fcn["start_date"]}</span></div>
     <div class="meta-item">到期日 <span>{fcn["maturity_date"]}</span></div>
     <div class="meta-item">年化票息 <span>{fcn["coupon_annual"]:.2f}%</span></div>
@@ -592,7 +594,8 @@ if _s_param and not d_param:
         st.error(f"短網址解析失敗：{_sbe}")
         st.stop()
 
-_SHORT_TOP = {'n':'name','c':'code','sd':'start_date','md':'maturity_date',
+_SHORT_TOP = {'n':'name','c':'code','cl':'client_name','pr':'principal_usd','fx':'fx_rate',
+              'sd':'start_date','md':'maturity_date',
               'f1':'first_ko_date','fn':'last_ko_date','ca':'coupon_annual',
               'gm':'guaranteed_months','cy':'currency',
               'pu':'coupon_per_period_usd','pt':'coupon_per_period_twd',
