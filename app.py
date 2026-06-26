@@ -497,7 +497,7 @@ body{{font-family:'Segoe UI',Arial,sans-serif;background:#f8fafc;color:#0f172a;f
   <h2>{fcn["name"]}</h2>
   <div class="header-meta">
     {f'<div class="meta-item">客戶 <span>{fcn["client_name"]}</span></div>' if fcn.get("client_name") else ""}
-    {f'<div class="meta-item">投入金額 <span>${fcn["principal_usd"]:,} USD　≈　{round(fcn["principal_usd"]*fcn.get("fx_rate",31)/10000):.0f} 萬台幣</span></div>' if fcn.get("principal_usd") else ""}
+    {f'<div class="meta-item">投入金額 <span>${fcn["principal_usd"]:,} USD</span></div>' if fcn.get("principal_usd") else ""}
     <div class="meta-item">交易日 <span>{fcn["start_date"]}</span></div>
     <div class="meta-item">到期日 <span>{fcn["maturity_date"]}</span></div>
     <div class="meta-item">年化票息 <span>{fcn["coupon_annual"]:.2f}%</span></div>
