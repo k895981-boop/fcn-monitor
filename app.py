@@ -493,7 +493,7 @@ body{{font-family:'Segoe UI',Arial,sans-serif;background:#f8fafc;color:#0f172a;f
 <body>
 
 <div class="header">
-  <h1>FCN 即時監控 | {fcn["code"]}　<span style="font-size:.55em;background:rgba(255,255,255,.18);color:#e2e8f0;padding:3px 10px;border-radius:20px;font-weight:400;vertical-align:middle">🔄 30 秒自動更新</span></h1>
+  <h1>FCN 即時監控 | {fcn["code"]}　<span style="font-size:.9em;color:#94a3b8;font-weight:400">🔄 30 秒自動更新</span></h1>
   <h2>{fcn["name"]}</h2>
   <div class="header-meta">
     <div class="meta-item">交易日 <span>{fcn["start_date"]}</span></div>
