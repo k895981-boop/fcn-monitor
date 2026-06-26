@@ -206,11 +206,14 @@ def build_html(fcn: dict, data: dict) -> str:
     # 配息期程列
     today = date.today()
     period_rows = ""
+    def _period_date(p, key):
+        iso = p.get(key + "_iso") or p[key].replace("/", "-")
+        return date.fromisoformat(iso)
     for p in fcn["periods"]:
-        s = date.fromisoformat(p["start_iso"])
-        e = date.fromisoformat(p["end_iso"])
+        s = _period_date(p, "start")
+        e = _period_date(p, "end")
         row_class = "cs-row-current" if s <= today <= e else ("cs-row-past" if today > e else "")
-        if not row_class and not any(date.fromisoformat(q["start_iso"]) <= today <= date.fromisoformat(q["end_iso"]) for q in fcn["periods"]):
+        if not row_class and not any(_period_date(q, "start") <= today <= _period_date(q, "end") for q in fcn["periods"]):
             if p["t"] == 1:
                 row_class = "cs-row-current"
         amount_html = f'<td class="cs-amount">${fcn["coupon_per_period_usd"]:,} USD&nbsp;<span class="cs-amount-twd">{fcn["coupon_per_period_twd"]}台幣<small>（匯率31）</small></span></td>'
@@ -496,7 +499,7 @@ body{{font-family:'Segoe UI',Arial,sans-serif;background:#f8fafc;color:#0f172a;f
     <div class="meta-item">交易日 <span>{fcn["start_date"]}</span></div>
     <div class="meta-item">到期日 <span>{fcn["maturity_date"]}</span></div>
     <div class="meta-item">年化票息 <span>{fcn["coupon_annual"]:.2f}%</span></div>
-    <div class="meta-item">月息 <span>{fcn["coupon_note"]}</span></div>
+    <div class="meta-item">月息 <span>{fcn.get("coupon_note") or f'{fcn["coupon_per_period_twd"]}台幣 / ${fcn["coupon_per_period_usd"]:,} USD'}</span></div>
   </div>
 </div>
 
@@ -578,7 +581,13 @@ d_param     = st.query_params.get("d", "")
 if d_param:
     try:
         _padded = d_param + "=" * ((4 - len(d_param) % 4) % 4)
-        fcn = _json.loads(_b64.urlsafe_b64decode(_padded).decode())
+        _raw = _b64.urlsafe_b64decode(_padded)
+        try:
+            import zlib as _zlib
+            _raw = _zlib.decompress(_raw)
+        except Exception:
+            pass  # 舊格式（未壓縮），直接使用
+        fcn = _json.loads(_raw.decode())
     except Exception as e:
         st.error(f"連結解碼失敗：{e}")
         st.stop()
