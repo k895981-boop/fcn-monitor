@@ -503,8 +503,8 @@ body{{font-family:'Segoe UI',Arial,sans-serif;background:#f8fafc;color:#0f172a;f
   <div class="header-meta">
     {f'<div class="meta-item">客戶 <span>{fcn["client_name"]}</span></div>' if fcn.get("client_name") else ""}
     {f'<div class="meta-item">投入金額 <span>${fcn["principal_usd"]:,} USD</span></div>' if fcn.get("principal_usd") else ""}
-    {f'<div class="meta-item">發行日 <span>{fcn["issue_date"]}</span></div>' if fcn.get("issue_date") else ""}
     <div class="meta-item">交易日 <span>{fcn["start_date"]}</span></div>
+    {f'<div class="meta-item">發行日 <span>{fcn["issue_date"]}</span></div>' if fcn.get("issue_date") else ""}
     <div class="meta-item">到期日 <span>{fcn["maturity_date"]}</span></div>
     <div class="meta-item">年化票息 <span>{fcn["coupon_annual"]:.2f}%</span></div>
     <div class="meta-item">月息 <span>{fcn.get("coupon_note") or f'{fcn["coupon_per_period_twd"]}台幣 / ${fcn["coupon_per_period_usd"]:,} USD'}</span></div>
