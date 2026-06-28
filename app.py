@@ -135,14 +135,18 @@ PRODUCTS = {
 
 @st.cache_data(ttl=30)
 def fetch_prices(tickers_key: str, underlyings: tuple, first_ko_str: str, last_ko_str: str, maturity_str: str):
-    def parse_date(s):
-        p = s.replace("/", "-").split("-")
-        return date(int(p[0]), int(p[1]), int(p[2]))
+    def parse_date(s, fallback=None):
+        try:
+            if not s: return fallback
+            p = s.replace("/", "-").split("-")
+            return date(int(p[0]), int(p[1]), int(p[2]))
+        except Exception:
+            return fallback
 
-    first_ko = parse_date(first_ko_str)
-    last_ko  = parse_date(last_ko_str)
-    maturity = parse_date(maturity_str)
     today    = date.today()
+    first_ko = parse_date(first_ko_str, today)
+    last_ko  = parse_date(last_ko_str,  today + timedelta(days=180))
+    maturity = parse_date(maturity_str, today + timedelta(days=180))
 
     result = []
     for u_raw in underlyings:
