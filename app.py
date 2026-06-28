@@ -143,10 +143,11 @@ def fetch_prices(tickers_key: str, underlyings: tuple, first_ko_str: str, last_k
         except Exception:
             return fallback
 
+    from datetime import timedelta as _td
     today    = date.today()
     first_ko = parse_date(first_ko_str, today)
-    last_ko  = parse_date(last_ko_str,  today + timedelta(days=180))
-    maturity = parse_date(maturity_str, today + timedelta(days=180))
+    last_ko  = parse_date(last_ko_str,  today + _td(days=180))
+    maturity = parse_date(maturity_str, today + _td(days=180))
 
     result = []
     for u_raw in underlyings:
