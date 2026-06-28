@@ -222,7 +222,7 @@ def build_html(fcn: dict, data: dict) -> str:
             if p["t"] == 1:
                 row_class = "cs-row-current"
         amount_html = f'<td class="cs-amount">${fcn["coupon_per_period_usd"]:,} USD&nbsp;<span class="cs-amount-twd">{fcn["coupon_per_period_twd"]}台幣<small>（匯率31）</small></span></td>'
-        period_rows += f'<tr class="{row_class}"><td>{p["t"]}</td><td>{p["pay"]}</td>{amount_html}</tr>'
+        period_rows += f'<tr class="{row_class}"><td>{p["t"]}</td>{amount_html}<td>{p["pay"]}</td></tr>'
     total_row = (f'<tr class="cs-total"><td colspan="2">總計（{len(fcn["periods"])}期全拿）'
                  f'<small style="color:#94a3b8;font-weight:400">　※ 若提前 KO，僅累計至觸發當期為止</small></td>'
                  f'<td class="cs-amount">${fcn["total_coupon_usd"]:,} USD&nbsp;'
@@ -524,7 +524,7 @@ body{{font-family:'Segoe UI',Arial,sans-serif;background:#f8fafc;color:#0f172a;f
   <div class="cs-title">配息期程</div>
   <div class="cs-table-wrap">
     <table class="cs-table">
-      <thead><tr><th>期</th><th>配息日</th><th>預計配息</th></tr></thead>
+      <thead><tr><th>期</th><th>預計配息</th><th>配息日</th></tr></thead>
       <tbody>{period_rows}{total_row}</tbody>
     </table>
   </div>
